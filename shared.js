@@ -453,6 +453,8 @@ a.nav-link{text-decoration:none;}
 .mz-title{font-family:var(--font-head);font-size:1.34rem;font-weight:700;line-height:1.18;color:var(--ink);margin-bottom:12px;letter-spacing:-.02em;}
 .mz-desc{font-size:.82rem;line-height:1.6;color:var(--muted);margin-bottom:22px;max-width:300px;}
 .mz-list{display:flex;flex-direction:column;gap:8px;}
+.mz-group-title{font-size:.64rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px;}
+.mz-group-title:first-child{margin-top:0;}
 .mz-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:#fff;border:1px solid var(--border);border-radius:10px;font-size:.84rem;font-weight:600;color:var(--ink);box-shadow:0 1px 2px rgba(15,20,80,.03);transition:border-color .3s var(--ease-expo),transform .3s var(--ease-expo),box-shadow .3s,color .2s;}
 .mz-item:hover{border-color:var(--accent);color:var(--accent);transform:translateX(5px);box-shadow:0 10px 26px rgba(34,84,244,.13);}
 .mz-item svg{width:14px;height:14px;color:var(--muted);transition:transform .3s var(--ease-expo),color .2s;flex-shrink:0;}
@@ -691,15 +693,19 @@ a.nav-link{text-decoration:none;}
   const ARROW_SVG = `<svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
   const navItems = [
-    { label: 'Talent Solutions', id: 'talent' },
-    { label: 'How We Work', id: 'delivery' },
-    { label: 'AI & Technology', id: 'technology' },
-    { label: 'Industries', id: 'industries' },
-    { label: 'Partners', id: 'partners' },
-    { label: 'About', id: 'about' },
+    { type: 'mega', label: 'Talent Services', id: 'talent' },
+    { type: 'mega', label: 'Workforce Solutions', id: 'workforce' },
+    { type: 'mega', label: 'AI in HR', id: 'ai-hr' },
+    { type: 'link', label: 'Talent Pool', href: 'https://aibuilders.hoonr.ai/', external: true },
+    { type: 'mega', label: 'About', id: 'about' },
   ];
 
-  const navLinksHTML = navItems.map(it => `
+  const navLinksHTML = navItems.map(it => {
+    if (it.type === 'link') {
+      const ext = it.external ? ' target="_blank" rel="noopener noreferrer"' : '';
+      return `<li class="nav-item"><a class="nav-link" href="${it.href}"${ext}>${it.label}</a></li>`;
+    }
+    return `
     <li class="nav-item" data-menu="${it.id}">
       <button class="nav-link" type="button" data-mega="${it.id}">
         ${it.label}
@@ -712,12 +718,13 @@ a.nav-link{text-decoration:none;}
         </svg>
       </button>
     </li>
-  `).join('');
+  `;
+  }).join('');
 
   const drawerDivHTML = `
     <div class="drawer-item">
       <div class="drawer-link" data-drawer-toggle="d-talent">
-        Talent Solutions
+        Talent Services
         <svg class="drawer-chevron" viewBox="0 0 16 16" fill="none">
           <path d="M4 6L8 10L12 6"
             stroke="currentColor"
@@ -728,18 +735,26 @@ a.nav-link{text-decoration:none;}
       </div>
       <div class="drawer-sub" id="d-talent">
         <div class="drawer-sub-group">
-          <a href="#">IT &amp; Technical Staffing</a>
-          <a href="#">Professional &amp; Business Staffing</a>
-          <a href="#">Healthcare Staffing</a>
-          <a href="#">Executive Search</a>
-          <a href="#">Direct Hire</a>
+          <div class="drawer-sub-head">Staffing by Domain</div>
+          <a href="/talent/services/it-staffing/">IT</a>
+          <a href="/talent/services/non-it-staffing/">Non-IT</a>
+          <a href="/talent/services/federal-staffing/">Federal</a>
+          <a href="https://pyramidci.com/healthcare/" target="_blank" rel="noopener noreferrer">Healthcare</a>
+        </div>
+        <div class="drawer-sub-group">
+          <div class="drawer-sub-head">Engagement Models</div>
+          <a href="/talent/services/staff-augmentation/">Staff Augmentation</a>
+          <a href="/talent/services/contract-to-hire/">Contract-to-Hire</a>
+          <a href="/talent/services/direct-hire/">Direct Hire</a>
+          <a href="/talent/services/payrolling-eor/">Payrolling (EOR)</a>
+          <a href="/talent/services/teams-as-a-service/">Teams as a Service (TaaS)</a>
         </div>
       </div>
     </div>
 
     <div class="drawer-item">
-      <div class="drawer-link" data-drawer-toggle="d-delivery">
-        How We Work
+      <div class="drawer-link" data-drawer-toggle="d-workforce">
+        Workforce Solutions
         <svg class="drawer-chevron" viewBox="0 0 16 16" fill="none">
           <path d="M4 6L8 10L12 6"
             stroke="currentColor"
@@ -748,20 +763,18 @@ a.nav-link{text-decoration:none;}
             stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="drawer-sub" id="d-delivery">
+      <div class="drawer-sub" id="d-workforce">
         <div class="drawer-sub-group">
-          <a href="#">Contract Staffing</a>
-          <a href="#">RPO / MSP</a>
-          <a href="#">Payroll Services</a>
-          <a href="/success-stories/">Client Success Stories</a>
-          <a href="/blogs/">Workforce Insights</a>
+          <a href="/talent/global-workforce/global-capability-centers/">Global Capability Centers (GCC)</a>
+          <a href="/talent/global-workforce/build-operate-transfer/">Build-Operate-Transfer (BOT)</a>
+          <a href="/talent/global-workforce/bestshoring/">Bestshoring &amp; Delivery Model</a>
         </div>
       </div>
     </div>
 
     <div class="drawer-item">
-      <div class="drawer-link" data-drawer-toggle="d-technology">
-        AI &amp; Technology
+      <div class="drawer-link" data-drawer-toggle="d-ai-hr">
+        AI in HR
         <svg class="drawer-chevron" viewBox="0 0 16 16" fill="none">
           <path d="M4 6L8 10L12 6"
             stroke="currentColor"
@@ -770,54 +783,15 @@ a.nav-link{text-decoration:none;}
             stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="drawer-sub" id="d-technology">
+      <div class="drawer-sub" id="d-ai-hr">
         <div class="drawer-sub-group">
-          <a href="/capabilities/ai-and-data/">AI &amp; Data</a>
-          <a href="/capabilities/cloud-and-infrastructure-engineering/">Cloud Engineering</a>
-          <a href="/capabilities/security-and-governance/">Security &amp; Governance</a>
+          <a href="https://hoonr.ai/" target="_blank" rel="noopener noreferrer">Hoonr&trade; Workforce Orchestration</a>
         </div>
       </div>
     </div>
 
     <div class="drawer-item">
-      <div class="drawer-link" data-drawer-toggle="d-industries">
-        Industries
-        <svg class="drawer-chevron" viewBox="0 0 16 16" fill="none">
-          <path d="M4 6L8 10L12 6"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div class="drawer-sub" id="d-industries">
-        <div class="drawer-sub-group">
-          <a href="/industries/banking-financial-services/">Banking &amp; Financial Services</a>
-          <a href="/industries/insurance/">Insurance</a>
-          <a href="/industries/healthcare/">Healthcare &amp; Life Sciences</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="drawer-item">
-      <div class="drawer-link" data-drawer-toggle="d-partners">
-        Partners
-        <svg class="drawer-chevron" viewBox="0 0 16 16" fill="none">
-          <path d="M4 6L8 10L12 6"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div class="drawer-sub" id="d-partners">
-        <div class="drawer-sub-group">
-          <a href="/partners/servicenow/">ServiceNow</a>
-          <a href="#">Hoonr</a>
-          <a href="#">Glider.AI</a>
-          <a href="#">iMocha</a>
-        </div>
-      </div>
+      <a class="drawer-link" href="https://aibuilders.hoonr.ai/" target="_blank" rel="noopener noreferrer">Talent Pool</a>
     </div>
 
     <div class="drawer-item">
@@ -833,12 +807,11 @@ a.nav-link{text-decoration:none;}
       </div>
       <div class="drawer-sub" id="d-about">
         <div class="drawer-sub-group">
-          <a href="/about/who-we-are/">Who We Are</a>
-          <a href="/about-leadership/">Our Leadership</a>
-          <a href="/success-stories/">Success Stories</a>
-          <a href="/blogs/">Workforce Insights</a>
-          <a href="#">Careers</a>
-          <a href="#">Newsroom &amp; Events</a>
+          <a href="/about/our-story/">Our Story</a>
+          <a href="/about/our-story/our-philosophy/">HumanEx Philosophy</a>
+          <a href="/about/our-story/diversity/">Diversity &amp; Certifications</a>
+          <a href="/about/our-story/newsroom/">Newsroom</a>
+          <a href="/about/our-story/resources/">Resources</a>
         </div>
       </div>
     </div>
@@ -854,120 +827,86 @@ a.nav-link{text-decoration:none;}
   const FEATURE_DESCS = {};
   const FEATURE_CAPS = {};
 
-  /* Data-driven mega panels. Links preserved from the original menus. */
+  /* Data-driven mega panels. */
   const MEGA_DATA = [
     {
       id: 'talent',
-      label: 'Talent Solutions',
-      title: 'Workforce Solutions',
+      label: 'Talent Services',
+      title: 'Talent Services',
       desc: 'Flexible talent solutions designed around business priorities, capability needs, and workforce outcomes.',
-      explore: { label: 'Contact Us', href: '/contact-us/' },
-      items: [
-        { label: 'IT &amp; Technical Staffing', href: '#' },
-        { label: 'Professional &amp; Business Staffing', href: '#' },
-        { label: 'Healthcare Staffing', href: '#' },
-        { label: 'Executive Search', href: '#' },
-        { label: 'Direct Hire', href: '#' },
+      explore: { label: 'Explore Talent Services', href: '/talent/services/' },
+      groups: [
+        {
+          title: 'Staffing by Domain',
+          items: [
+            { label: 'IT', href: '/talent/services/it-staffing/' },
+            { label: 'Non-IT', href: '/talent/services/non-it-staffing/' },
+            { label: 'Federal', href: '/talent/services/federal-staffing/' },
+            { label: 'Healthcare', href: 'https://pyramidci.com/healthcare/', external: true },
+          ]
+        },
+        {
+          title: 'Engagement Models',
+          items: [
+            { label: 'Staff Augmentation', href: '/talent/services/staff-augmentation/' },
+            { label: 'Contract-to-Hire', href: '/talent/services/contract-to-hire/' },
+            { label: 'Direct Hire', href: '/talent/services/direct-hire/' },
+            { label: 'Payrolling (EOR)', href: '/talent/services/payrolling-eor/' },
+            { label: 'Teams as a Service (TaaS)', href: '/talent/services/teams-as-a-service/' },
+          ]
+        },
       ],
       feature: {
-        cap: 'Talent Solutions',
-        title: 'Build the workforce your business needs',
-        desc: 'Explore flexible approaches to sourcing, hiring, and workforce delivery.'
+        cap: 'Talent Services',
+        title: 'Flexible talent, matched to how you hire',
+        desc: 'From individual specialists to full engagement models — staffing built around the way your business actually works.'
       },
       assessTag: 'Explore',
       assess: [
-        { title: 'Client Success Stories', desc: 'See how we’ve helped enterprise clients build the teams they needed, faster.', href: '/success-stories/' },
-        { title: 'Workforce Insights', desc: 'Trends, benchmarks, and perspectives on the modern workforce.', href: '/blogs/' },
+        { title: 'Staffing by Domain', desc: 'IT, Non-IT, Federal, and Healthcare staffing built around your talent needs.', href: '/talent/services/' },
+        { title: 'Engagement Models', desc: 'Staff augmentation, contract-to-hire, direct hire, payrolling, and TaaS.', href: '/talent/services/' },
       ]
     },
     {
-      id: 'delivery',
-      label: 'How We Work',
-      title: 'Flexible Delivery Models',
-      desc: 'Workforce delivery models aligned to speed, scale, compliance, and business requirements.',
-      explore: { label: 'Contact Us', href: '/contact-us/' },
+      id: 'workforce',
+      label: 'Workforce Solutions',
+      title: 'Workforce Solutions',
+      desc: 'Global delivery models that build a workforce capability your organization owns.',
+      explore: { label: 'Explore Workforce Solutions', href: '/talent/global-workforce/' },
       items: [
-        { label: 'Contract Staffing', href: '#' },
-        { label: 'RPO / MSP', href: '#' },
-        { label: 'Payroll Services', href: '#' },
-        { label: 'Client Success Stories', href: '/success-stories/' },
+        { label: 'Global Capability Centers (GCC)', href: '/talent/global-workforce/global-capability-centers/' },
+        { label: 'Build-Operate-Transfer (BOT)', href: '/talent/global-workforce/build-operate-transfer/' },
+        { label: 'Bestshoring &amp; Delivery Model', href: '/talent/global-workforce/bestshoring/' },
       ],
       feature: {
-        cap: 'How We Work',
-        title: 'A workforce model built around your priorities',
-        desc: 'Combine talent, technology, and delivery support according to your needs.'
-      },
-      assessTag: 'Insights',
-      assess: [
-        { title: 'Success Stories', desc: 'Real outcomes from clients using our flexible delivery models.', href: '/success-stories/' },
-        { title: 'Workforce Insights', desc: 'Trends, benchmarks, and perspectives on the modern workforce.', href: '/blogs/' },
-      ]
-    },
-    {
-      id: 'technology',
-      label: 'AI & Technology',
-      title: 'Technology Capability',
-      desc: 'Technology and engineering capabilities that complement workforce transformation.',
-      explore: { label: 'Contact Us', href: '/contact-us/' },
-      items: [
-        { label: 'AI &amp; Data', href: '/capabilities/ai-and-data/' },
-        { label: 'Cloud Engineering', href: '/capabilities/cloud-and-infrastructure-engineering/' },
-        { label: 'Security &amp; Governance', href: '/capabilities/security-and-governance/' },
-      ],
-      feature: {
-        cap: 'AI & Technology',
-        title: 'Technology capability for modern enterprises',
-        desc: 'Explore selected engineering and technology capabilities.'
-      },
-      assessTag: 'Capabilities',
-      assess: [
-        { title: 'AI &amp; Data', desc: 'Engineering capability for AI-enabled data platforms and analytics.', href: '/capabilities/ai-and-data/' },
-        { title: 'Cloud Engineering', desc: 'Modernize infrastructure with secure, scalable cloud architecture.', href: '/capabilities/cloud-and-infrastructure-engineering/' },
-      ]
-    },
-    {
-      id: 'industries',
-      label: 'Industries',
-      title: 'Industry Experience',
-      desc: 'Workforce and technology experience across highly regulated and business-critical industries.',
-      explore: { label: 'Contact Us', href: '/contact-us/' },
-      items: [
-        { label: 'Banking &amp; Financial Services', href: '/industries/banking-financial-services/' },
-        { label: 'Insurance', href: '/industries/insurance/' },
-        { label: 'Healthcare &amp; Life Sciences', href: '/industries/healthcare/' },
-      ],
-      feature: {
-        cap: 'Industries',
-        title: 'Experience across critical industries',
-        desc: 'Explore selected industry capabilities and solutions.'
-      },
-      assessTag: 'Industries',
-      assess: [
-        { title: 'Banking &amp; Financial Services', desc: 'Deep experience supporting regulated financial institutions.', href: '/industries/banking-financial-services/' },
-        { title: 'Insurance', desc: 'Workforce and technology expertise across the insurance value chain.', href: '/industries/insurance/' },
-      ]
-    },
-    {
-      id: 'partners',
-      label: 'Partners',
-      title: 'Partner Ecosystem',
-      desc: 'Technology and talent ecosystem relationships supporting enterprise workforce delivery.',
-      explore: { label: 'Contact Us', href: '/contact-us/' },
-      items: [
-        { label: 'ServiceNow', href: '/partners/servicenow/' },
-        { label: 'Hoonr', href: '#' },
-        { label: 'Glider.AI', href: '#' },
-        { label: 'iMocha', href: '#' },
-      ],
-      feature: {
-        cap: 'Partners',
-        title: 'A connected workforce ecosystem',
-        desc: 'Selected platforms and partners supporting talent and delivery outcomes.'
+        cap: 'Workforce Solutions',
+        title: 'Build a workforce capability you own',
+        desc: 'Global Capability Centers and Build-Operate-Transfer models that convert a delivery engagement into a capability your organization controls.'
       },
       assessTag: 'Explore',
       assess: [
-        { title: 'ServiceNow', desc: 'Certified delivery expertise across the ServiceNow platform.', href: '/partners/servicenow/' },
-        { title: 'Contact Us', desc: 'Talk to our team about your workforce or technology needs.', href: '/contact-us/' },
+        { title: 'Global Capability Centers', desc: 'Stand up a dedicated, owned delivery center abroad.', href: '/talent/global-workforce/global-capability-centers/' },
+        { title: 'Build-Operate-Transfer', desc: 'A managed engagement that transitions to a client-owned team.', href: '/talent/global-workforce/build-operate-transfer/' },
+      ]
+    },
+    {
+      id: 'ai-hr',
+      label: 'AI in HR',
+      title: 'AI in HR',
+      desc: 'AI-powered workforce orchestration that moves talent decisions at the speed of the business.',
+      explore: { label: 'Explore AI in HR', href: '/talent/ai-in-hr/' },
+      items: [
+        { label: 'Hoonr&trade; Workforce Orchestration', href: 'https://hoonr.ai/', external: true },
+      ],
+      feature: {
+        cap: 'AI in HR',
+        title: 'Hoonr&trade; — Workforce Orchestration',
+        desc: 'AI-powered matching and workforce orchestration built to move talent decisions at the speed of the business.'
+      },
+      assessTag: 'Explore',
+      assess: [
+        { title: 'Hoonr&trade;', desc: 'See how AI-driven orchestration matches talent to need.', href: 'https://hoonr.ai/' },
+        { title: 'Join AI Builders', desc: 'Join the community building the future of AI-enabled work.', href: 'https://aibuilders.hoonr.ai/' },
       ]
     },
     {
@@ -975,37 +914,37 @@ a.nav-link{text-decoration:none;}
       label: 'About',
       title: 'About Pyramid Talent',
       desc: 'Learn more about our organisation, leadership, experience, and workforce perspective.',
-      explore: { label: 'Who We Are', href: '/about/who-we-are/' },
+      explore: { label: 'Our Story', href: '/about/our-story/' },
       items: [
-        { label: 'Who We Are', href: '/about/who-we-are/' },
-        { label: 'Our Leadership', href: '/about-leadership/' },
-        { label: 'Success Stories', href: '/success-stories/' },
-        { label: 'Workforce Insights', href: '/blogs/' },
-        { label: 'Careers', href: '#' },
-        { label: 'Newsroom &amp; Events', href: '#' },
+        { label: 'Our Story', href: '/about/our-story/' },
+        { label: 'HumanEx Philosophy', href: '/about/our-story/our-philosophy/' },
+        { label: 'Diversity &amp; Certifications', href: '/about/our-story/diversity/' },
+        { label: 'Newsroom', href: '/about/our-story/newsroom/' },
+        { label: 'Resources', href: '/about/our-story/resources/' },
       ],
       feature: {
         cap: 'About',
-        title: 'People, technology, and opportunity',
-        desc: 'Discover the organisation behind the Pyramid Talent workforce platform.'
+        title: 'People-first, technology-enabled',
+        desc: 'Discover the philosophy, leadership, and track record behind Pyramid Talent.'
       },
       assessTag: 'Learn More',
       assess: [
-        { title: 'Our Leadership', desc: 'Meet the team guiding Pyramid Talent’s strategy and delivery.', href: '/about-leadership/' },
-        { title: 'Contact Us', desc: 'Get in touch to learn more about working with Pyramid Talent.', href: '/contact-us/' },
+        { title: 'HumanEx Philosophy', desc: 'The people-first philosophy behind how we deliver.', href: '/about/our-story/our-philosophy/' },
+        { title: 'Diversity &amp; Certifications', desc: 'Our certifications and commitment to supplier diversity.', href: '/about/our-story/diversity/' },
       ]
     }
   ];
 
   function buildMegaPanel(d) {
-    const items = d.items.map(it => {
+    const renderItem = it => {
       const fdesc = (FEATURE_DESCS[it.label] || d.feature.desc).replace(/"/g, '&quot;');
       const fcap = (FEATURE_CAPS[it.label] || d.feature.cap).replace(/"/g, '&quot;');
-      return `<a class="mz-item" href="${it.href}" data-ftitle="${it.label}" data-fdesc="${fdesc}" data-fcap="${fcap}">${it.label} ${ITEM_CHEV}</a>`;
-    }).join('');
-    const pills = d.partnerLogos
-      ? `<div class="partner-logo-grid">${d.partnerLogos.map(p => `<a class="partner-logo-card mz-item" href="${p.href}" title="${p.label}" data-ftitle="${p.label}" data-fdesc="${(FEATURE_DESCS[p.label] || d.feature.desc).replace(/"/g, '&quot;')}" data-fcap="${(FEATURE_CAPS[p.label] || d.feature.cap).replace(/"/g, '&quot;')}"><img class="partner-logo-img${p.className ? ` ${p.className}` : ``}" src="${p.src}" alt="${p.label}" loading="lazy"/></a>`).join('')}</div>`
-      : (d.pills ? `<div class="mz-pills">${d.pills.map(p => `<a class="mz-pill" href="${d.items[0].href}"><span class="p-dot"></span>${p}</a>`).join('')}</div>` : '');
+      const ext = it.external ? ' target="_blank" rel="noopener noreferrer"' : '';
+      return `<a class="mz-item" href="${it.href}"${ext} data-ftitle="${it.label}" data-fdesc="${fdesc}" data-fcap="${fcap}">${it.label} ${ITEM_CHEV}</a>`;
+    };
+    const itemsHTML = d.groups
+      ? d.groups.map(g => `<div class="mz-group-title">${g.title}</div><div class="mz-list">${g.items.map(renderItem).join('')}</div>`).join('')
+      : `<div class="mz-list">${d.items.map(renderItem).join('')}</div>`;
     const assess = d.assess.map((a, i) => `
         <a class="mz-assess-card" href="${a.href || d.explore.href}">
           <div class="mz-assess-icon">${ASSESS_ICONS[i % ASSESS_ICONS.length]}</div>
@@ -1018,8 +957,7 @@ a.nav-link{text-decoration:none;}
         <div class="mz-label">${d.label}</div>
         <h3 class="mz-title">${d.title}</h3>
         <p class="mz-desc">${d.desc}</p>
-        <div class="mz-list">${items}</div>
-        ${pills}
+        ${itemsHTML}
       </div>
       <div class="mega-zone">
         <a class="mz-feature-card" href="${d.explore.href}">
@@ -1073,7 +1011,7 @@ a.nav-link{text-decoration:none;}
       </a>
       <ul class="nav-links" id="navLinks">${navLinksHTML}</ul>
       <div class="nav-right">
-        <a href="/contact-us" class="btn-nav-solid">Contact us ${ARROW_SVG}</a>
+        <a href="/talent/contact-us/" class="btn-nav-solid">Contact us ${ARROW_SVG}</a>
       </div>
       <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
         <span class="ham-line"></span><span class="ham-line"></span><span class="ham-line"></span>
@@ -1118,7 +1056,7 @@ a.nav-link{text-decoration:none;}
         </div>
         <nav class="drawer-nav">${drawerDivHTML}</nav>
         <div class="drawer-cta">
-          <a href="/contact-us" class="drawer-cta-btn">Contact us ${ARROW_SVG}</a>
+          <a href="/talent/contact-us/" class="drawer-cta-btn">Contact us ${ARROW_SVG}</a>
         </div>
       </div>`;
     document.body.insertBefore(drawerEl, navEl.nextSibling);
@@ -1136,8 +1074,7 @@ a.nav-link{text-decoration:none;}
        mirrors the desktop mega menu. Original drawer link groups are
        preserved untouched. */
     const DRAWER_MEGA_MAP = {
-      'd-talent': 'talent', 'd-delivery': 'delivery', 'd-technology': 'technology',
-      'd-industries': 'industries', 'd-partners': 'partners', 'd-about': 'about'
+      'd-talent': 'talent', 'd-workforce': 'workforce', 'd-ai-hr': 'ai-hr', 'd-about': 'about'
     };
     Object.keys(DRAWER_MEGA_MAP).forEach(function (subId) {
       const sub = drawerEl.querySelector('#' + subId);

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://celsiortech.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+
+  <url><loc>https://celsiortech.com/capabilities/ai-and-data/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/capabilities/ai-led-engineering/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/capabilities/cloud-and-infrastructure-engineering/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/capabilities/digital-operations-and-security/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/capabilities/security-and-governance/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <url><loc>https://celsiortech.com/industries/banking-financial-services/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/industries/healthcare/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/industries/insurance/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <url><loc>https://celsiortech.com/solutions/technology-consulting/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/solutions/managed-programs/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/solutions/teams-as-a-service/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/solutions/gcc-and-nearshore/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/solutions/ai-upskilling/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <url><loc>https://celsiortech.com/our-focus/ai-adoption/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/our-focus/ai-first-digital-engineering/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/our-focus/cost-and-efficiency/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/our-focus/digital-experience/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/our-focus/risk-and-compliance/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <url><loc>https://celsiortech.com/ai-innovation/celsior-ai-lab/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/ai-innovation/frameworks-accelerators/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://celsiortech.com/ai-innovation/synthetix/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <url><loc>https://celsiortech.com/partners/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://celsiortech.com/blogs/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://celsiortech.com/contact-us/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+</urlset>

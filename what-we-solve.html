@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Readiness — What We Solve | Celsior</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+  <style>
+/* ══════════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1d1d1f; --ink-2:#3a3a3c; --ink-3:#6e6e73; --ink-4:#aeaeb2;
+  --white:#fff; --surface:#f5f5f7; --border:rgba(0,0,0,.08); --border-md:rgba(0,0,0,.13);
+  --accent:#2254f4; --accent-lt:rgba(34,84,244,.08); --accent-md:rgba(34,84,244,.18);
+  --teal:#12baa0; --gold:#f3d25f; --crimson:#d9366b; --cobalt:#3675bc;
+  --font:-apple-system,'SF Pro Display',BlinkMacSystemFont,'Inter',system-ui,sans-serif;
+  --spring:cubic-bezier(.34,1.56,.64,1); --ease-out:cubic-bezier(.16,1,.3,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--white);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+body::before{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.022;mix-blend-mode:overlay}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.16);border-radius:10px}
+
+/* ══ LAYOUT ══ */
+.wrap{max-width:1100px;margin:0 auto;padding:0 32px}
+.section{position:relative;overflow:hidden}
+.pad{padding:130px 0}
+
+/* ══ TYPE ══ */
+.d-xl{font-size:clamp(2.8rem,6.8vw,7rem);font-weight:700;line-height:.96;letter-spacing:-.046em}
+.d-lg{font-size:clamp(2rem,4.5vw,4.4rem);font-weight:700;line-height:1.0;letter-spacing:-.038em}
+.d-md{font-size:clamp(1.4rem,2.8vw,2.6rem);font-weight:700;line-height:1.08;letter-spacing:-.028em}
+.b-lg{font-size:1.05rem;line-height:1.72;font-weight:400;color:var(--ink-3)}
+.b-md{font-size:.92rem;line-height:1.68;font-weight:400;color:var(--ink-3)}
+.eye{display:inline-flex;align-items:center;gap:8px;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+.eye::before{content:'';display:block;width:20px;height:1.5px;background:currentColor;border-radius:2px}
+.eye.dim{color:var(--ink-4)}.eye.dim::before{background:var(--ink-4)}
+.eye.center{justify-content:center}.eye.center::before{display:none}
+
+/* ══ BUTTONS ══ */
+.btn{display:inline-flex;align-items:center;gap:9px;padding:13px 28px;border-radius:980px;font-size:.88rem;font-weight:600;letter-spacing:-.01em;cursor:pointer;border:none;white-space:nowrap;transition:transform .22s var(--spring),box-shadow .22s var(--spring),background .2s}
+.btn svg{width:14px;height:14px;transition:transform .2s var(--spring);flex-shrink:0}
+.btn:hover svg{transform:translateX(3px)}
+.btn-dk{background:var(--ink);color:#fff;box-shadow:0 2px 16px rgba(0,0,0,.2)}
+.btn-dk:hover{background:#111;transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.28)}
+.btn-ow{background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.22)}
+.btn-ow:hover{background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.45);transform:translateY(-1px)}
+.btn-line{background:transparent;color:var(--accent);border:1.5px solid var(--accent-md);padding:10px 22px;border-radius:980px;font-size:.82rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:background .2s,border-color .2s,gap .2s var(--spring)}
+.btn-line:hover{background:var(--accent-lt);border-color:var(--accent);gap:12px}
+.btn-line svg{width:13px;height:13px}
+
+/* ══════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════ */
+#hero{
+  min-height:100svh;background:#050508;
+  display:grid;grid-template-rows:1fr auto;
+  position:relative;overflow:hidden;
+}
+.h-amb{position:absolute;inset:0;pointer-events:none}
+.a1{position:absolute;width:900px;height:700px;top:-200px;left:-100px;background:radial-gradient(ellipse,rgba(34,84,244,.22) 0%,transparent 65%);animation:af1 18s ease-in-out infinite alternate}
+.a2{position:absolute;width:700px;height:600px;bottom:-100px;right:-80px;background:radial-gradient(ellipse,rgba(18,186,160,.14) 0%,transparent 65%);animation:af2 22s ease-in-out infinite alternate}
+.a3{position:absolute;width:500px;height:400px;top:30%;right:15%;background:radial-gradient(ellipse,rgba(217,54,107,.09) 0%,transparent 65%);animation:af3 16s ease-in-out infinite alternate}
+@keyframes af1{from{transform:translate(0,0) scale(1)}to{transform:translate(60px,40px) scale(1.1)}}
+@keyframes af2{from{transform:translate(0,0) scale(1)}to{transform:translate(-40px,-60px) scale(1.12)}}
+@keyframes af3{from{transform:translate(0,0) scale(1)}to{transform:translate(30px,50px) scale(.9)}}
+.h-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.032) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.032) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,black 20%,transparent 75%)}
+.h-fade{position:absolute;inset:auto 0 0;height:55%;background:linear-gradient(to top,#050508,transparent);z-index:2;pointer-events:none}
+
+/* Hero inner — two-col */
+.h-inner{
+  position:relative;z-index:10;
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;gap:0;
+  padding:160px 52px 100px;
+  max-width:1400px;margin:0 auto;width:100%;
+  overflow:visible;
+}
+
+/* ── Hero text ── */
+.h-text{}
+.h-crumb{display:flex;align-items:center;gap:8px;margin-bottom:36px}
+.h-crumb span{font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.28)}
+.h-crumb svg{width:9px;height:9px;color:rgba(255,255,255,.2)}
+.h-crumb span.here{color:rgba(255,255,255,.65)}
+.h-pill{display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 8px;border-radius:40px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);margin-bottom:30px}
+.h-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(34,84,244,.7);animation:pp 2.6s ease-in-out infinite}
+@keyframes pp{0%,100%{opacity:1;box-shadow:0 0 10px rgba(34,84,244,.7)}50%{opacity:.5;box-shadow:0 0 4px rgba(34,84,244,.3)}}
+.h-pill-t{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.h-hl-dim{color:rgba(255,255,255,.18);display:block}
+.h-hl-main{color:#fff;display:block}
+.h-hl-acc{color:var(--accent);display:block}
+.h-sub{max-width:500px;font-size:clamp(.9rem,1.3vw,1.05rem);font-weight:400;line-height:1.74;color:rgba(255,255,255,.42);margin:26px 0 40px}
+.h-acts{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+
+/* ── Hero fan stage ── */
+.h-fan{
+  position:relative;
+  height:520px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:visible;
+}
+.h-fan-origin{
+  position:absolute;
+  /* fan cards are absolutely positioned relative to this */
+  width:1px;height:1px;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+}
+
+/* Fan cards */
+.fan-card{
+  position:absolute;
+  width:210px;height:290px;
+  border-radius:20px;
+  overflow:hidden;
+  cursor:pointer;
+  /* anchor low so rotation fans naturally outward from bottom */
+  transform-origin:center 88%;
+  top:50%;left:50%;
+  margin-top:-145px;margin-left:-105px;
+  /* initial state for GSAP */
+  opacity:0;
+  transition:filter .3s;
+  will-change:transform;
+}
+.fan-card:hover{filter:brightness(1.15)}
+.fan-card:hover .fc-reveal{opacity:1}
+
+.fan-card-bg{position:absolute;inset:-80%;border-radius:50%;filter:blur(35px);z-index:0;animation:bsp var(--bd,13s) linear infinite}
+@keyframes bsp{to{transform:rotate(360deg)}}
+.fan-card-dots{position:absolute;inset:0;z-index:1;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:20px 20px;mask-image:radial-gradient(ellipse at 60% 35%,black 20%,transparent 70%)}
+.fan-card-body{position:absolute;inset:0;z-index:3;padding:24px 20px;display:flex;flex-direction:column;justify-content:flex-end}
+.fan-card-num{font-size:.55rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--fc-c);opacity:.65;margin-bottom:8px;display:block}
+.fan-card-title{font-size:1rem;font-weight:700;color:#fff;line-height:1.2;letter-spacing:-.015em}
+.fan-card-sub{font-size:.68rem;color:rgba(255,255,255,.35);margin-top:5px;line-height:1.4}
+.fan-badge{position:absolute;top:16px;right:16px;z-index:4;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14)}
+.fan-badge svg{width:16px;height:16px;color:var(--fc-c)}
+.fc-reveal{position:absolute;inset:0;z-index:5;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;border-radius:20px}
+.fc-reveal span{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.8);border-bottom:1px solid rgba(255,255,255,.3);padding-bottom:2px}
+
+/* Fan card palettes */
+.fc-p1{background:#050c1a;--fc-c:#3675BC;--bd:17s}
+.fc-p1 .fan-card-bg{background:conic-gradient(from 0deg at 38% 54%,transparent 0,rgba(54,117,188,.65) 45deg,rgba(80,155,235,.44) 95deg,transparent 155deg,rgba(54,117,188,.4) 240deg,rgba(18,186,160,.16) 295deg,transparent 360deg)}
+.fc-p2{background:#14100a;--fc-c:#F3D25F;--bd:11s}
+.fc-p2 .fan-card-bg{background:conic-gradient(from 0deg at 38% 52%,transparent 0,rgba(243,210,95,.6) 42deg,rgba(232,131,74,.42) 92deg,transparent 150deg,rgba(243,210,95,.36) 230deg,rgba(18,186,160,.14) 292deg,transparent 360deg)}
+.fc-p3{background:#021412;--fc-c:#12BAA0;--bd:13s}
+.fc-p3 .fan-card-bg{background:conic-gradient(from 0deg at 40% 52%,transparent 0,rgba(18,186,160,.62) 45deg,rgba(0,215,195,.42) 95deg,transparent 155deg,rgba(18,186,160,.38) 240deg,rgba(243,210,95,.13) 295deg,transparent 360deg)}
+.fc-p4{background:#100814;--fc-c:#D9366B;--bd:15s}
+.fc-p4 .fan-card-bg{background:conic-gradient(from 0deg at 42% 54%,transparent 0,rgba(217,54,107,.65) 45deg,rgba(150,26,77,.45) 95deg,transparent 155deg,rgba(217,54,107,.42) 245deg,rgba(54,117,188,.16) 305deg,transparent 360deg)}
+
+/* stat bar */
+.h-stats{position:relative;z-index:10;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.07);background:rgba(5,5,8,.85);backdrop-filter:blur(20px)}
+.hs{padding:28px 32px;border-right:1px solid rgba(255,255,255,.05);position:relative;overflow:hidden}
+.hs:last-child{border-right:none}
+.hs-acc{position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--sc,var(--accent));transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease-out)}
+.hs:hover .hs-acc{transform:scaleX(1)}
+.hs-v{font-size:clamp(1.4rem,2.2vw,2.2rem);font-weight:700;letter-spacing:-.03em;color:#fff;line-height:1;margin-bottom:8px}
+.hs-v span{color:var(--sc,var(--accent))}
+.hs-l{font-size:.72rem;font-weight:400;color:rgba(255,255,255,.32);line-height:1.5}
+
+/* ══════════════════════════════════════════════
+   CHALLENGE — CSS STICKY STACK (no JS glitch)
+══════════════════════════════════════════════ */
+#sec-challenge { background: var(--white); }
+
+.ch-header {
+  max-width: 1100px; margin: 0 auto;
+  padding: 100px 40px 72px;
+}
+.ch-header-inner {
+  display: flex; align-items: flex-end;
+  justify-content: space-between; gap: 40px; flex-wrap: wrap;
+}
+.ch-intro-sub {
+  max-width: 380px; font-size: .98rem;
+  color: var(--ink-3); line-height: 1.72;
+}
+
+/* Scroll container — tall enough for 3 sticky cards */
+/* Pinned stage — GSAP pins this for 200vh of scroll */
+.sch-scroll {
+  position: relative;
+  height: 100vh;
+}
+
+/* Inner wrapper clips overflow so cards below viewport stay hidden
+   even after GSAP makes the outer container position:fixed */
+.sch-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* All 3 cards sit at the exact same position inside the pinned stage.
+   Card 1 starts visible (y:0). Cards 2+3 start below via gsap.set(). */
+.sch-card {
+  position: absolute;
+  top: calc(50vh - 240px);
+  left: 0; right: 0;
+  width: calc(100% - 80px);
+  max-width: 1020px;
+  margin: 0 auto;
+  height: 480px;
+  border-radius: 24px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  box-shadow: 0 24px 80px rgba(0,0,0,.22), 0 2px 8px rgba(0,0,0,.12);
+  will-change: transform, filter;
+  transform-origin: top center;
+}
+
+/* z-index: each later card sits on top of the previous */
+.sch-c1 { z-index: 1; }
+.sch-c2 { z-index: 2; }
+.sch-c3 { z-index: 3; }
+
+/* Card palettes */
+.sch-c1 { background: #060e1f; --cc: #3675BC; --cc-dim: rgba(54,117,188,.15); }
+.sch-c2 { background: #0f0518; --cc: #D9366B; --cc-dim: rgba(217,54,107,.15); }
+.sch-c3 { background: #011710; --cc: #12BAA0; --cc-dim: rgba(18,186,160,.15); }
+
+/* Conic blob */
+.sch-blob {
+  position: absolute; inset: -80%; border-radius: 50%;
+  filter: blur(52px); z-index: 0; opacity: .65;
+  animation: bsp var(--cb-dur, 14s) linear infinite;
+}
+.sch-c1 .sch-blob { background: conic-gradient(from 0deg at 35% 55%, transparent 0, rgba(54,117,188,.5) 50deg, rgba(34,84,244,.28) 100deg, transparent 160deg, rgba(54,117,188,.32) 240deg, transparent 360deg); --cb-dur: 18s; }
+.sch-c2 .sch-blob { background: conic-gradient(from 0deg at 40% 50%, transparent 0, rgba(217,54,107,.54) 50deg, rgba(150,26,77,.3) 100deg, transparent 155deg, rgba(217,54,107,.34) 240deg, transparent 360deg); --cb-dur: 14s; }
+.sch-c3 .sch-blob { background: conic-gradient(from 0deg at 38% 52%, transparent 0, rgba(18,186,160,.54) 50deg, rgba(0,200,175,.28) 100deg, transparent 155deg, rgba(18,186,160,.34) 240deg, transparent 360deg); --cb-dur: 16s; }
+
+/* Dot grid */
+.sch-dots {
+  position: absolute; inset: 0; z-index: 1;
+  background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 80% 80% at 68% 40%, black 20%, transparent 72%);
+}
+
+/* Left text panel */
+.sch-left {
+  position: relative; z-index: 5;
+  padding: 48px 52px;
+  display: flex; flex-direction: column; justify-content: center;
+  border-right: 1px solid rgba(255,255,255,.06);
+}
+.sch-num {
+  font-size: 5.5rem; font-weight: 900; letter-spacing: -.06em; line-height: 1;
+  color: var(--cc); opacity: .1; margin-bottom: 24px;
+}
+.sch-eyebrow {
+  font-size: .6rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--cc); opacity: .75; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.sch-eyebrow::before {
+  content: ''; display: block; width: 16px; height: 1.5px;
+  background: currentColor; border-radius: 2px;
+}
+.sch-title {
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem); font-weight: 700; color: #fff;
+  letter-spacing: -.026em; line-height: 1.15; margin-bottom: 18px;
+}
+.sch-body {
+  font-size: .86rem; color: rgba(255,255,255,.42); line-height: 1.76; margin-bottom: 26px;
+}
+.sch-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.sch-tag {
+  padding: 5px 13px; border-radius: 40px; font-size: .64rem; font-weight: 600;
+  background: var(--cc-dim); border: 1px solid rgba(255,255,255,.09); color: var(--cc);
+}
+
+/* Right visual panel */
+.sch-right {
+  position: relative; z-index: 5;
+  display: flex; align-items: center; justify-content: center; padding: 48px 40px;
+}
+.sch-visual-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%;
+}
+.sch-stat-num {
+  font-size: clamp(4rem, 7vw, 6.5rem); font-weight: 900; letter-spacing: -.05em; line-height: 1;
+  color: var(--cc); opacity: .18; text-align: center;
+}
+.sch-icon-ring {
+  width: 88px; height: 88px; border-radius: 50%;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
+  display: grid; place-items: center; color: var(--cc);
+  box-shadow: 0 0 36px var(--cc-dim);
+}
+.sch-icon-ring svg { width: 38px; height: 38px; }
+.sch-fact { text-align: center; }
+.sch-fact-val { font-size: 1.7rem; font-weight: 800; color: #fff; letter-spacing: -.04em; line-height: 1; margin-bottom: 4px; }
+.sch-fact-lbl { font-size: .68rem; font-weight: 500; color: rgba(255,255,255,.28); letter-spacing: .04em; line-height: 1.5; }
+
+/* Progress rail */
+.sch-progress-rail {
+  position: fixed; right: 28px; top: 50%; transform: translateY(-50%);
+  z-index: 100;
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+  opacity: 0; pointer-events: none;
+  transition: opacity .4s;
+}
+.sch-progress-rail.visible { opacity: 1; pointer-events: auto; }
+.sch-rail-line { width: 1.5px; height: 52px; background: var(--border-md); position: relative; overflow: hidden; }
+.sch-rail-fill { position: absolute; top: 0; left: 0; width: 100%; background: var(--accent); transform-origin: top; transform: scaleY(0); }
+.sch-rail-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 1.5px solid var(--border-md); background: transparent;
+  transition: background .3s, border-color .3s, transform .3s var(--spring);
+  cursor: pointer; margin: 4px 0;
+}
+.sch-rail-dot.active { background: var(--accent); border-color: var(--accent); transform: scale(1.4); }
+
+/* ══════════════════════════════════════════════
+   ARC CAROUSEL — Assessment dimensions
+══════════════════════════════════════════════ */
+#sec-assess{background:#060610;position:relative;overflow:hidden}
+#sec-assess::before{content:'';position:absolute;width:1400px;height:800px;top:-300px;left:50%;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(34,84,244,.09) 0%,transparent 65%);pointer-events:none}
+
+.arc-header{text-align:center;margin-bottom:24px}
+.arc-sub{text-align:center;font-size:.88rem;color:rgba(255,255,255,.3);max-width:500px;margin:12px auto 52px}
+
+/* ══════════════════════════════════════════════
+   IMPACT
+══════════════════════════════════════════════ */
+#sec-impact{background:var(--surface);border-top:1px solid var(--border)}
+.imp-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.imp-roi{font-size:clamp(2.8rem,5.5vw,5.8rem);font-weight:700;letter-spacing:-.05em;line-height:.9;color:var(--ink);margin-bottom:28px}
+.imp-roi em{font-style:normal;color:var(--accent)}
+.imp-body{font-size:.97rem;color:var(--ink-3);line-height:1.74;margin-bottom:16px}
+.imp-body strong{color:var(--ink);font-weight:600}
+.imp-lnk{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-size:.82rem;font-weight:600;color:var(--accent);transition:gap .2s var(--spring)}
+.imp-lnk:hover{gap:14px}
+.imp-lnk svg{width:14px;height:14px}
+.evid{background:var(--white);border-radius:22px;border:1px solid var(--border);box-shadow:0 4px 48px rgba(0,0,0,.06);overflow:hidden}
+.evid-top{padding:36px 36px 28px;border-bottom:1px solid var(--border);position:relative}
+.evid-top::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 90% 0%,rgba(34,84,244,.05) 0%,transparent 65%);pointer-events:none}
+.ev-lbl{font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-4);margin-bottom:22px}
+.ev-nums{display:flex;align-items:center;gap:20px;margin-bottom:20px}
+.ev-n{font-size:clamp(1.8rem,3vw,2.8rem);font-weight:700;letter-spacing:-.04em;line-height:1}
+.ev-n-b{color:var(--ink-4)}.ev-n-a{color:var(--teal)}
+.ev-arr svg{width:20px;height:20px;color:var(--ink-4)}
+.ev-sub{font-size:.76rem;color:var(--ink-4);line-height:1.45}
+.evid-bot{padding:24px 36px}
+.ev-quote{font-size:.84rem;font-weight:500;color:var(--ink-2);line-height:1.65;border-left:2px solid var(--accent);padding-left:16px;margin-bottom:18px}
+.ev-badge{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;background:var(--surface);border:1px solid var(--border);border-radius:40px;font-size:.7rem;font-weight:600;color:var(--ink-3)}
+.ev-bdot{width:6px;height:6px;border-radius:50%;background:var(--teal)}
+
+/* ══════════════════════════════════════════════
+   ARC / ASSESS — now a static 4-col dim grid
+══════════════════════════════════════════════ */
+#sec-assess{background:#060610;position:relative;overflow:hidden}
+#sec-assess::before{content:'';position:absolute;width:1400px;height:800px;top:-300px;left:50%;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(34,84,244,.09) 0%,transparent 65%);pointer-events:none}
+.arc-header{text-align:center;margin-bottom:24px}
+.arc-sub{text-align:center;font-size:.88rem;color:rgba(255,255,255,.3);max-width:500px;margin:12px auto 52px}
+
+.dim-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.dim-card{position:relative;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;min-height:460px;transition:transform .45s var(--ease-out),box-shadow .45s}
+.dim-card:hover{transform:translateY(-8px);box-shadow:0 32px 64px rgba(0,0,0,.45)}
+.dim-blob{position:absolute;inset:-80%;border-radius:50%;filter:blur(38px);z-index:0;animation:bsp var(--dbd,13s) linear infinite}
+.dim-dots{position:absolute;inset:0;z-index:1;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:22px 22px;mask-image:radial-gradient(ellipse at 62% 32%,black 22%,transparent 68%)}
+.dim-p1{background:#050c1a;--dc:#3675BC}
+.dim-p1 .dim-blob{background:conic-gradient(from 0deg at 38% 54%,transparent 0,rgba(54,117,188,.65) 45deg,rgba(80,155,235,.44) 95deg,transparent 155deg,rgba(54,117,188,.4) 240deg,rgba(18,186,160,.16) 295deg,transparent 360deg);--dbd:17s}
+.dim-p2{background:#14100a;--dc:#F3D25F}
+.dim-p2 .dim-blob{background:conic-gradient(from 0deg at 38% 52%,transparent 0,rgba(243,210,95,.6) 42deg,rgba(232,131,74,.42) 92deg,transparent 150deg,rgba(243,210,95,.36) 230deg,rgba(18,186,160,.14) 292deg,transparent 360deg);--dbd:11s}
+.dim-p3{background:#021412;--dc:#12BAA0}
+.dim-p3 .dim-blob{background:conic-gradient(from 0deg at 40% 52%,transparent 0,rgba(18,186,160,.62) 45deg,rgba(0,215,195,.42) 95deg,transparent 155deg,rgba(18,186,160,.38) 240deg,rgba(243,210,95,.13) 295deg,transparent 360deg);--dbd:13s}
+.dim-p4{background:#100814;--dc:#D9366B}
+.dim-p4 .dim-blob{background:conic-gradient(from 0deg at 42% 54%,transparent 0,rgba(217,54,107,.65) 45deg,rgba(150,26,77,.45) 95deg,transparent 155deg,rgba(217,54,107,.42) 245deg,rgba(54,117,188,.16) 305deg,transparent 360deg);--dbd:15s}
+.dim-inner{position:relative;z-index:3;padding:28px 22px 22px;display:flex;flex-direction:column;height:100%}
+.dim-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.dim-num{font-size:2.4rem;font-weight:900;letter-spacing:-.05em;line-height:1;color:var(--dc);opacity:.18}
+.dim-ico{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:grid;place-items:center;color:var(--dc);flex-shrink:0}
+.dim-ico svg{width:19px;height:19px}
+.dim-label{font-size:.56rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--dc);opacity:.65;margin-bottom:8px}
+.dim-title{font-size:1rem;font-weight:700;color:#fff;line-height:1.2;letter-spacing:-.015em;margin-bottom:11px}
+.dim-body{font-size:.74rem;color:rgba(255,255,255,.42);line-height:1.7;flex:1;margin-bottom:16px}
+.dim-out{background:rgba(255,255,255,.05);border-radius:10px;padding:12px 14px;border-left:2px solid var(--dc)}
+.dim-out-l{font-size:.54rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:4px}
+.dim-out-t{font-size:.73rem;font-weight:600;color:rgba(255,255,255,.75);line-height:1.4}
+
+/* ══════════════════════════════════════════════
+   STORY GRID — Results (static 4-col)
+══════════════════════════════════════════════ */
+#sec-stories{background:#08081a;position:relative;overflow:hidden}
+#sec-stories::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 90% 60% at 50% 0%,rgba(34,84,244,.07) 0%,transparent 70%);pointer-events:none}
+.stories-header{text-align:center;margin-bottom:0}
+.stories-header .eye.dim::before{background:rgba(255,255,255,.2)}
+.stories-header .eye.dim{color:rgba(255,255,255,.35)}
+
+.sc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+
+.sc-card{border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);transition:border-color .3s,box-shadow .3s,transform .4s var(--ease-out)}
+.sc-card:hover{border-color:rgba(255,255,255,.16);box-shadow:0 20px 60px rgba(0,0,0,.4);transform:translateY(-5px)}
+.sc-card.featured{border-color:rgba(34,84,244,.4);box-shadow:0 0 0 1px rgba(34,84,244,.2),0 20px 60px rgba(34,84,244,.15)}
+.sc-portrait{height:220px;position:relative;overflow:hidden}
+.sc-portrait-bg{position:absolute;inset:0;background:var(--sp-bg)}
+.sc-portrait-blob{position:absolute;inset:-40%;border-radius:50%;background:var(--sp-blob);filter:blur(40px);animation:bsp var(--sp-dur,14s) linear infinite;opacity:.8}
+.sc-figure{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:110px;height:190px;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+.sc-head{width:52px;height:52px;border-radius:50%;background:var(--sp-skin,rgba(255,255,255,.25));margin-bottom:-4px;position:relative;z-index:2;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.sc-body-shape{width:86px;height:125px;border-radius:50% 50% 0 0 / 40% 40% 0 0;background:var(--sp-shirt,rgba(255,255,255,.15));box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.sc-card:nth-child(1){--sp-bg:#03091e;--sp-blob:conic-gradient(from 0deg at 40% 50%,rgba(34,84,244,.7),rgba(54,117,188,.5),rgba(18,186,160,.3),rgba(34,84,244,.7));--sp-dur:14s;--sp-skin:rgba(200,170,140,.7);--sp-shirt:rgba(34,84,244,.6)}
+.sc-card:nth-child(2){--sp-bg:#1a0d00;--sp-blob:conic-gradient(from 0deg at 42% 48%,rgba(243,210,95,.7),rgba(232,131,74,.5),rgba(150,80,20,.3),rgba(243,210,95,.7));--sp-dur:11s;--sp-skin:rgba(200,160,100,.75);--sp-shirt:rgba(180,80,20,.6)}
+.sc-card:nth-child(3){--sp-bg:#001612;--sp-blob:conic-gradient(from 0deg at 38% 52%,rgba(18,186,160,.7),rgba(0,210,180,.5),rgba(10,100,80,.3),rgba(18,186,160,.7));--sp-dur:13s;--sp-skin:rgba(180,200,150,.7);--sp-shirt:rgba(18,186,160,.55)}
+.sc-card:nth-child(4){--sp-bg:#120010;--sp-blob:conic-gradient(from 0deg at 42% 52%,rgba(217,54,107,.65),rgba(150,26,77,.5),rgba(80,10,60,.3),rgba(217,54,107,.65));--sp-dur:16s;--sp-skin:rgba(220,180,140,.7);--sp-shirt:rgba(180,20,80,.55)}
+.sc-metric-badge{position:absolute;top:14px;right:14px;z-index:10;background:rgba(255,255,255,.12);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:9px 13px}
+.sc-metric-val{font-size:1.25rem;font-weight:800;color:#fff;letter-spacing:-.03em;line-height:1}
+.sc-metric-lbl{font-size:.58rem;font-weight:600;color:rgba(255,255,255,.5);margin-top:2px;line-height:1.2}
+.sc-avatar{position:absolute;bottom:14px;left:14px;z-index:10;display:flex;align-items:center;gap:9px}
+.sc-av-icon{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);font-size:.7rem;font-weight:800;color:#fff}
+.sc-av-name{font-size:.7rem;font-weight:700;color:#fff;line-height:1}
+.sc-av-role{font-size:.6rem;color:rgba(255,255,255,.45);margin-top:1px}
+.sc-body{padding:22px 22px 26px}
+.sc-quote{font-size:.86rem;font-weight:600;color:#fff;line-height:1.55;letter-spacing:-.01em;margin-bottom:18px}
+.sc-link{display:inline-flex;align-items:center;gap:7px;font-size:.74rem;font-weight:600;color:rgba(255,255,255,.45);transition:color .2s,gap .2s var(--spring)}
+.sc-link:hover{color:rgba(255,255,255,.85);gap:12px}
+.sc-link svg{width:13px;height:13px}
+
+/* ══════════════════════════════════════════════
+   BRIDGE — Minimal horizontal strip
+══════════════════════════════════════════════ */
+#sec-bridge{background:var(--white);border-top:1px solid var(--border)}
+.bridge-strip{
+  display:flex;align-items:stretch;gap:0;
+  border:1px solid var(--border);border-radius:20px;
+  overflow:hidden;
+  margin-top:52px;
+}
+.br-item{
+  flex:1;padding:40px 36px;position:relative;
+  border-right:1px solid var(--border);
+  transition:background .3s;
+  cursor:pointer;
+}
+.br-item:last-child{border-right:none}
+.br-item:hover{background:var(--surface)}
+.br-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease-out);background:var(--br-c,linear-gradient(90deg,var(--accent),var(--teal)))}
+.br-item:hover::before{transform:scaleX(1)}
+.br-item:nth-child(1){--br-c:linear-gradient(90deg,#3675BC,#12BAA0)}
+.br-item:nth-child(2){--br-c:linear-gradient(90deg,#F3D25F,#E8834A)}
+.br-item:nth-child(3){--br-c:linear-gradient(90deg,#961A4D,#3675BC)}
+.br-label{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-4);margin-bottom:12px}
+.br-title{font-size:1.05rem;font-weight:700;color:var(--ink);letter-spacing:-.016em;margin-bottom:8px}
+.br-body{font-size:.8rem;color:var(--ink-3);line-height:1.6;margin-bottom:20px}
+.br-arrow{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;font-weight:700;color:var(--accent);transition:gap .2s var(--spring)}
+.br-item:hover .br-arrow{gap:11px}
+.br-arrow svg{width:13px;height:13px}
+
+/* ══════════════════════════════════════════════
+   FAQ + CTA
+══════════════════════════════════════════════ */
+#sec-faq{background:var(--surface);border-top:1px solid var(--border)}
+.faq-lay{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.faq-list{display:flex;flex-direction:column}
+.faq-it{border-bottom:1px solid var(--border)}
+.faq-q{padding:22px 0;display:flex;align-items:center;justify-content:space-between;gap:18px;cursor:pointer;user-select:none;font-size:.9rem;font-weight:600;letter-spacing:-.01em;color:var(--ink);transition:color .15s}
+.faq-q:hover,.faq-q.open{color:var(--accent)}
+.faq-ico{width:26px;height:26px;flex-shrink:0;border-radius:50%;background:var(--white);border:1px solid var(--border-md);display:grid;place-items:center;transition:background .2s,border-color .2s}
+.faq-q.open .faq-ico{background:var(--accent);border-color:var(--accent)}
+.faq-ico svg{width:11px;height:11px;color:var(--ink-4);transition:transform .3s var(--ease-out),color .2s}
+.faq-q.open .faq-ico svg{transform:rotate(45deg);color:#fff}
+.faq-a{display:none;padding:0 0 22px;font-size:.85rem;color:var(--ink-3);line-height:1.75}
+.faq-a.open{display:block}
+.cta-card{background:var(--ink);border-radius:24px;padding:52px 48px;position:relative;overflow:hidden}
+.cta-card::before{content:'';position:absolute;width:800px;height:600px;top:-300px;right:-200px;border-radius:50%;background:radial-gradient(ellipse,rgba(34,84,244,.25) 0%,transparent 65%);pointer-events:none;animation:ctab 20s ease-in-out infinite alternate}
+.cta-card::after{content:'';position:absolute;width:500px;height:500px;bottom:-200px;left:-100px;border-radius:50%;background:radial-gradient(ellipse,rgba(18,186,160,.12) 0%,transparent 65%);pointer-events:none}
+@keyframes ctab{from{transform:scale(1) translate(0,0)}to{transform:scale(1.15) translate(-30px,20px)}}
+.cta-in{position:relative;z-index:2}
+.cta-tag{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:18px}
+.cta-hd{font-size:clamp(1.5rem,2.8vw,2.2rem);font-weight:700;color:var(--white);letter-spacing:-.025em;line-height:1.15;margin-bottom:14px}
+.cta-sub{font-size:.86rem;color:rgba(255,255,255,.4);line-height:1.7;margin-bottom:36px}
+.cta-btns{display:flex;flex-direction:column;gap:10px}
+
+/* ══ GSAP INITIAL STATES ══ */
+.gu{opacity:0;transform:translateY(36px)}
+.gr{opacity:0;transform:translateX(36px)}
+.gf{opacity:0}
+.gs{opacity:0;transform:scale(.95)}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:1024px){
+  .h-inner{grid-template-columns:1fr;padding:140px 32px 80px}
+  .h-fan{height:380px;margin-top:40px}
+  .sch-card{grid-template-columns:1fr;height:380px;top:60px;margin-top:0!important}
+  .sch-right{display:none}
+  .sch-left{padding:36px 28px}
+  .ch-header{padding:64px 20px 40px}
+  .imp-grid{grid-template-columns:1fr;gap:44px}
+  .bridge-strip{flex-direction:column}
+  .br-item{border-right:none;border-bottom:1px solid var(--border)}
+  .br-item:last-child{border-bottom:none}
+  .faq-lay{grid-template-columns:1fr;gap:52px}
+  .h-stats{grid-template-columns:repeat(2,1fr)}
+  .dim-grid{grid-template-columns:repeat(2,1fr)}
+  .sc-grid{grid-template-columns:repeat(2,1fr)}
+  .sch-progress-rail{right:16px}
+}
+@media(max-width:640px){
+  .wrap{padding:0 20px}
+  .pad{padding:80px 0}
+  .h-inner{padding:120px 20px 60px}
+  .h-stats{grid-template-columns:1fr 1fr}
+  .hs{padding:20px 18px}
+  .cta-card{padding:36px 28px}
+  .dim-grid{grid-template-columns:1fr}
+  .sc-grid{grid-template-columns:1fr}
+  .sch-card{height:480px}
+  .sch-stage{height:480px}
+  .sch-scroll{height:auto}
+  .sch-left{padding:32px 24px}
+  .sch-num{font-size:3.5rem;margin-bottom:20px}
+  .sch-progress-rail{display:none}
+}
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════ HERO ══════════════════════ -->
+<section id="hero">
+  <div class="h-amb"><div class="a1"></div><div class="a2"></div><div class="a3"></div></div>
+  <div class="h-grid" id="heroGrid"></div>
+  <div class="h-fade"></div>
+
+  <div class="h-inner">
+    <!-- Left: text -->
+    <div class="h-text">
+      <div class="h-crumb gf">
+        <span>What We Solve</span>
+        <svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5h6M5.5 2.5l2 2-2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>AI Adoption</span>
+        <svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5h6M5.5 2.5l2 2-2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="here">AI Readiness</span>
+      </div>
+      <div class="h-pill gf"><div class="h-dot"></div><span class="h-pill-t">AI Adoption · AI Readiness</span></div>
+      <h1 class="d-xl gu">
+        <span class="h-hl-dim">AI Ambition.</span>
+        <span class="h-hl-main">Zero Readiness</span>
+        <span class="h-hl-acc">Gap.</span>
+      </h1>
+      <p class="h-sub gu">Only 4% of enterprises achieve AI at scale. The barrier isn't ambition or budget — it's the data foundation, governance architecture, and organisational readiness that most programmes skip.</p>
+      <div class="h-acts gu">
+        <a href="#sec-assess" class="btn btn-dk">Start AI Readiness Assessment <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a href="#sec-challenge" class="btn btn-ow">See Why AI Stalls</a>
+      </div>
+    </div>
+
+    <!-- Right: Fan of assessment dimension cards -->
+    <div class="h-fan" id="fanStage">
+      <div class="fan-card fc-p1" data-fan="0">
+        <div class="fan-card-bg"></div><div class="fan-card-dots"></div>
+        <div class="fan-badge"><svg viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="7" rx="7" ry="3" stroke="currentColor" stroke-width="1.5"/><path d="M5 7v5c0 1.66 3.13 3 7 3s7-1.34 7-3V7" stroke="currentColor" stroke-width="1.5"/></svg></div>
+        <div class="fan-card-body">
+          <span class="fan-card-num">01 · Data</span>
+          <div class="fan-card-title">Data Architecture</div>
+          <div class="fan-card-sub">Schema · Lineage · Pipelines</div>
+        </div>
+        <div class="fc-reveal"><span>Explore →</span></div>
+      </div>
+
+      <div class="fan-card fc-p2" data-fan="1">
+        <div class="fan-card-bg"></div><div class="fan-card-dots"></div>
+        <div class="fan-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l7 4v6c0 4.42-3 8.48-7 10-4-1.52-7-5.58-7-10V6l7-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
+        <div class="fan-card-body">
+          <span class="fan-card-num">02 · Governance</span>
+          <div class="fan-card-title">AI Governance</div>
+          <div class="fan-card-sub">EU AI Act · HIPAA · OCC</div>
+        </div>
+        <div class="fc-reveal"><span>Explore →</span></div>
+      </div>
+
+      <div class="fan-card fc-p3" data-fan="2">
+        <div class="fan-card-bg"></div><div class="fan-card-dots"></div>
+        <div class="fan-badge"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg></div>
+        <div class="fan-card-body">
+          <span class="fan-card-num">03 · MLOps</span>
+          <div class="fan-card-title">Infrastructure</div>
+          <div class="fan-card-sub">Pipelines · Monitoring · APIs</div>
+        </div>
+        <div class="fc-reveal"><span>Explore →</span></div>
+      </div>
+
+      <div class="fan-card fc-p4" data-fan="3">
+        <div class="fan-card-bg"></div><div class="fan-card-dots"></div>
+        <div class="fan-badge"><svg viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="fan-card-body">
+          <span class="fan-card-num">04 · Workforce</span>
+          <div class="fan-card-title">Team Readiness</div>
+          <div class="fan-card-sub">GenSpark · Enablement</div>
+        </div>
+        <div class="fc-reveal"><span>Explore →</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stat bar -->
+  <div class="h-stats">
+    <div class="hs" style="--sc:#2254f4"><div class="hs-v"><span>96%</span></div><div class="hs-l">of AI programmes stall before production</div><div class="hs-acc"></div></div>
+    <div class="hs" style="--sc:#F3D25F"><div class="hs-v">$<span style="color:#F3D25F">2.8M</span></div><div class="hs-l">average cost of a failed AI initiative</div><div class="hs-acc"></div></div>
+    <div class="hs" style="--sc:#12BAA0"><div class="hs-v"><span style="color:#12BAA0">3–9</span> mo</div><div class="hs-l">Celsior time-to-production vs 12–24 mo industry</div><div class="hs-acc"></div></div>
+    <div class="hs" style="--sc:#D9366B"><div class="hs-v"><span style="color:#D9366B">40%</span></div><div class="hs-l">of AI failures caused by poor data quality</div><div class="hs-acc"></div></div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════ CHALLENGE ══════════════════════ -->
+<section id="sec-challenge" class="section">
+
+  <div class="ch-header">
+    <div class="ch-header-inner">
+      <div>
+        <div class="eye">The Challenge</div>
+        <h2 class="d-lg">Why AI Programmes<br><em style="font-style:normal;color:var(--accent)">Stall</em></h2>
+      </div>
+      <p class="ch-intro-sub">Most organisations don't have an AI problem. They have a readiness problem — and it shows up in three places.</p>
+    </div>
+  </div>
+
+  <!-- Pinned stage — GSAP pins this, all 3 cards inside, stagger up from below -->
+  <div class="sch-scroll" id="schScroll">
+    <div class="sch-inner">
+
+    <div class="sch-card sch-c1" id="schCard0">
+      <div class="sch-blob"></div><div class="sch-dots"></div>
+      <div class="sch-left">
+        <div class="sch-num">01</div>
+        <div class="sch-eyebrow">Data Architecture</div>
+        <div class="sch-title">Fragmented Data</div>
+        <p class="sch-body">AI inherits and amplifies your existing data gaps. Siloed systems, inconsistent schemas, and absent lineage create models organisations can't trust — or defend to regulators. Manual data prep consumes 60–80% of engineering capacity before a single model trains.</p>
+        <div class="sch-tags">
+          <span class="sch-tag">No single source of truth</span>
+          <span class="sch-tag">60–80% manual prep</span>
+          <span class="sch-tag">Schema inconsistency</span>
+          <span class="sch-tag">Missing lineage</span>
+        </div>
+      </div>
+      <div class="sch-right">
+        <div class="sch-visual-wrap">
+          <div class="sch-stat-num">60%</div>
+          <div class="sch-icon-ring"><svg viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="7" rx="7" ry="3" stroke="currentColor" stroke-width="1.5"/><path d="M5 7v5c0 1.66 3.13 3 7 3s7-1.34 7-3V7" stroke="currentColor" stroke-width="1.5"/><path d="M5 12v5c0 1.66 3.13 3 7 3s7-1.34 7-3v-5" stroke="currentColor" stroke-width="1.5"/></svg></div>
+          <div class="sch-fact"><div class="sch-fact-val">60–80%</div><div class="sch-fact-lbl">of engineering capacity lost<br>to manual data preparation</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sch-card sch-c2" id="schCard1">
+      <div class="sch-blob"></div><div class="sch-dots"></div>
+      <div class="sch-left">
+        <div class="sch-num">02</div>
+        <div class="sch-eyebrow">Governance</div>
+        <div class="sch-title">Missing Governance</div>
+        <p class="sch-body">The EU AI Act, OCC model risk guidelines, and HIPAA AI provisions are not future concerns. Organisations that add governance after deployment spend 3–5× more on remediation — and face regulatory exposure in the interim.</p>
+        <div class="sch-tags">
+          <span class="sch-tag">No model registry</span>
+          <span class="sch-tag">Explainability absent</span>
+          <span class="sch-tag">EU AI Act exposure</span>
+          <span class="sch-tag">Compliance excluded</span>
+        </div>
+      </div>
+      <div class="sch-right">
+        <div class="sch-visual-wrap">
+          <div class="sch-stat-num">3–5×</div>
+          <div class="sch-icon-ring"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l7 4v6c0 4.42-3 8.48-7 10-4-1.52-7-5.58-7-10V6l7-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="sch-fact"><div class="sch-fact-val">3–5×</div><div class="sch-fact-lbl">higher remediation cost when<br>governance is added post-deploy</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sch-card sch-c3" id="schCard2">
+      <div class="sch-blob"></div><div class="sch-dots"></div>
+      <div class="sch-left">
+        <div class="sch-num">03</div>
+        <div class="sch-eyebrow">MLOps Infrastructure</div>
+        <div class="sch-title">Infrastructure Debt</div>
+        <p class="sch-body">A working proof-of-concept and a production-grade AI system are separated almost entirely by MLOps maturity — not model quality. Model drift remains invisible until business impact surfaces, and security architecture is rarely updated for AI-specific threat vectors.</p>
+        <div class="sch-tags">
+          <span class="sch-tag">No MLOps pipeline</span>
+          <span class="sch-tag">Model drift invisible</span>
+          <span class="sch-tag">AI security gaps</span>
+          <span class="sch-tag">No retraining triggers</span>
+        </div>
+      </div>
+      <div class="sch-right">
+        <div class="sch-visual-wrap">
+          <div class="sch-stat-num">96%</div>
+          <div class="sch-icon-ring"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg></div>
+          <div class="sch-fact"><div class="sch-fact-val">96%</div><div class="sch-fact-lbl">of AI programmes stall<br>before reaching production</div></div>
+        </div>
+      </div>
+    </div><!-- /.sch-c3 -->
+
+    </div><!-- /.sch-inner -->
+  </div><!-- /.sch-scroll -->
+
+  <div class="sch-progress-rail" id="schRail">
+    <div class="sch-rail-dot active" data-card="0"></div>
+    <div class="sch-rail-line"><div class="sch-rail-fill" id="schFill1"></div></div>
+    <div class="sch-rail-dot" data-card="1"></div>
+    <div class="sch-rail-line"><div class="sch-rail-fill" id="schFill2"></div></div>
+    <div class="sch-rail-dot" data-card="2"></div>
+  </div>
+
+</section>
+
+
+<!-- ══════════════════════ ARC CAROUSEL ══════════════════════ -->
+<section id="sec-assess" class="section pad">
+  <div class="wrap">
+    <div class="arc-header">
+      <div class="eye dim center gu">The Celsior AI Readiness Assessment</div>
+      <h2 class="d-lg gu" style="color:#fff;margin-bottom:0">Four Dimensions.<br>One <span style="color:var(--accent)">Prioritised</span> Roadmap.</h2>
+    </div>
+    <p class="arc-sub gu">Four structural gaps that separate AI ambition from AI at scale. Actionable in 4–6 weeks.</p>
+
+    <!-- Static 4-col dimension grid -->
+    <div class="dim-grid">
+
+      <div class="dim-card dim-p1 gs">
+        <div class="dim-blob"></div><div class="dim-dots"></div>
+        <div class="dim-inner">
+          <div class="dim-top">
+            <div class="dim-num">01</div>
+            <div class="dim-ico">
+              <svg viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="7" rx="7" ry="3" stroke="currentColor" stroke-width="1.5"/><path d="M5 7v5c0 1.66 3.13 3 7 3s7-1.34 7-3V7" stroke="currentColor" stroke-width="1.5"/><path d="M5 12v5c0 1.66 3.13 3 7 3s7-1.34 7-3v-5" stroke="currentColor" stroke-width="1.5"/></svg>
+            </div>
+          </div>
+          <div class="dim-label">Data Architecture</div>
+          <div class="dim-title">Data Architecture<br>Not AI-Ready</div>
+          <div class="dim-body">We assess schema consistency, lineage documentation, and ingestion pipeline design — then deliver a gap-to-remediation roadmap. Our Smart Data Ingestion platform cuts manual data prep by 60–80%.</div>
+          <div class="dim-out">
+            <div class="dim-out-l">Outcome</div>
+            <div class="dim-out-t">Data quality scorecard + cloud-ready remediation plan in 3 weeks.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dim-card dim-p2 gs" style="--delay:.1s">
+        <div class="dim-blob"></div><div class="dim-dots"></div>
+        <div class="dim-inner">
+          <div class="dim-top">
+            <div class="dim-num">02</div>
+            <div class="dim-ico">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l7 4v6c0 4.42-3 8.48-7 10-4-1.52-7-5.58-7-10V6l7-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <div class="dim-label">AI Governance</div>
+          <div class="dim-title">AI Governance<br>Absent or Reactive</div>
+          <div class="dim-body">Our HALO Framework produces a working AI governance charter, model registry, and compliance mapping — EU AI Act, HIPAA, OCC SR 11-7. Governance designed in from day one, not added after a finding.</div>
+          <div class="dim-out">
+            <div class="dim-out-l">Outcome</div>
+            <div class="dim-out-t">Board-ready governance framework + compliance gap register in 4 weeks.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dim-card dim-p3 gs" style="--delay:.2s">
+        <div class="dim-blob"></div><div class="dim-dots"></div>
+        <div class="dim-inner">
+          <div class="dim-top">
+            <div class="dim-num">03</div>
+            <div class="dim-ico">
+              <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+            </div>
+          </div>
+          <div class="dim-label">MLOps Infrastructure</div>
+          <div class="dim-title">MLOps Infrastructure<br>Underdeveloped</div>
+          <div class="dim-body">We assess MLOps maturity, API architecture, and monitoring instrumentation against your AI use case requirements. Our CAFE platform compresses build time from 6–12 months to 6–12 weeks.</div>
+          <div class="dim-out">
+            <div class="dim-out-l">Outcome</div>
+            <div class="dim-out-t">MLOps readiness score + phased infrastructure plan with cost estimates.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dim-card dim-p4 gs" style="--delay:.3s">
+        <div class="dim-blob"></div><div class="dim-dots"></div>
+        <div class="dim-inner">
+          <div class="dim-top">
+            <div class="dim-num">04</div>
+            <div class="dim-ico">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+          <div class="dim-label">Workforce Readiness</div>
+          <div class="dim-title">Workforce Not<br>Ready to Adopt AI</div>
+          <div class="dim-body">Our GenSpark practice designs role-specific AI enablement programmes co-created with your technology and operations leads — targeted upskilling measured against adoption metrics.</div>
+          <div class="dim-out">
+            <div class="dim-out-l">Outcome</div>
+            <div class="dim-out-t">Skills baseline in 2 weeks. Training programme delivered in 8–12 weeks.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════ IMPACT ══════════════════════ -->
+<section id="sec-impact" class="section">
+  <div class="wrap pad">
+    <div class="imp-grid">
+      <div>
+        <div class="eye gu">Business Impact</div>
+        <div class="imp-roi gu">What Getting<br>This Right<br>Is <em>Worth</em></div>
+        <p class="imp-body gu">Readiness is the highest-ROI investment in your AI budget. A $200K readiness investment that prevents a $2.8M failed deployment returns <strong>10× before a single model reaches production.</strong></p>
+        <p class="imp-body gu" style="margin-top:0">Celsior's AI Readiness Assessment delivers a prioritised, resource-costed remediation roadmap in 4–6 weeks — ahead of budget commitment.</p>
+        <a href="#sec-assess" class="imp-lnk gu">See the Assessment Framework <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+      <div class="evid gr">
+        <div class="evid-top">
+          <div class="ev-lbl">Client Outcome · P&amp;C Insurance Carrier · 2024</div>
+          <div class="ev-nums">
+            <div><div class="ev-n ev-n-b">18 mo</div><div class="ev-sub">to production before</div></div>
+            <div class="ev-arr"><svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div><div class="ev-n ev-n-a">5 mo</div><div class="ev-sub">to production after</div></div>
+          </div>
+        </div>
+        <div class="evid-bot">
+          <div class="ev-quote">Three data pipeline gaps were blocking two prior AI initiatives. Celsior's assessment identified and remediated them before the next programme began — eliminating the root cause of both failures.</div>
+          <div class="ev-badge"><div class="ev-bdot"></div>AI Pilot-to-Production Cycle Cut: <strong style="color:var(--ink)">72%</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════ STORY CAROUSEL ══════════════════════ -->
+<section id="sec-stories" class="section pad">
+  <div class="stories-header wrap">
+    <div class="eye dim center gu">Results in Production</div>
+    <h2 class="d-lg gu" style="color:#fff;margin-bottom:14px">Perfect Fit for<br><span style="color:var(--accent)">Every Enterprise</span></h2>
+    <p class="gu" style="color:rgba(255,255,255,.35);font-size:.95rem;max-width:520px;margin:0 auto">Whether you're in insurance, banking, or technology — Celsior's AI Readiness Assessment delivers measurable outcomes in weeks, not months.</p>
+  </div>
+
+  <div class="sc-grid wrap" style="margin-top:52px">
+
+    <!-- Card 1 -->
+    <div class="sc-card featured gs">
+      <div class="sc-portrait">
+        <div class="sc-portrait-bg"></div>
+        <div class="sc-portrait-blob"></div>
+        <div class="sc-figure"><div class="sc-head"></div><div class="sc-body-shape"></div></div>
+        <div class="sc-metric-badge"><div class="sc-metric-val">72%</div><div class="sc-metric-lbl">Faster to<br>Production</div></div>
+        <div class="sc-avatar">
+          <div class="sc-av-icon">PC</div>
+          <div class="sc-av-info"><div class="sc-av-name">P&amp;C Insurance Carrier</div><div class="sc-av-role">Enterprise · AI Readiness</div></div>
+        </div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-quote">"Three data pipeline gaps were blocking two prior AI initiatives. Celsior found and remediated them before the next programme began."</div>
+        <a href="#" class="sc-link">Read Story <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="sc-card gs" style="--delay:.1s">
+      <div class="sc-portrait">
+        <div class="sc-portrait-bg"></div>
+        <div class="sc-portrait-blob"></div>
+        <div class="sc-figure"><div class="sc-head"></div><div class="sc-body-shape"></div></div>
+        <div class="sc-metric-badge"><div class="sc-metric-val">80%</div><div class="sc-metric-lbl">Less Manual<br>Data Prep</div></div>
+        <div class="sc-avatar">
+          <div class="sc-av-icon">RB</div>
+          <div class="sc-av-info"><div class="sc-av-name">Regional Bank</div><div class="sc-av-role">Banking · Data Engineering</div></div>
+        </div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-quote">"Smart Data Ingestion cut our manual data prep from 3 weeks per sprint to under 4 days. The AI programme finally had clean fuel."</div>
+        <a href="#" class="sc-link">Read Story <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="sc-card gs" style="--delay:.2s">
+      <div class="sc-portrait">
+        <div class="sc-portrait-bg"></div>
+        <div class="sc-portrait-blob"></div>
+        <div class="sc-figure"><div class="sc-head"></div><div class="sc-body-shape"></div></div>
+        <div class="sc-metric-badge"><div class="sc-metric-val">56%</div><div class="sc-metric-lbl">Faster AI/ML<br>Hiring Cycle</div></div>
+        <div class="sc-avatar">
+          <div class="sc-av-icon">TS</div>
+          <div class="sc-av-info"><div class="sc-av-name">Tech Scale-up</div><div class="sc-av-role">Technology · AI Talent</div></div>
+        </div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-quote">"Average AI/ML hire cycle dropped from 41 days to 18. Celsior's pre-tested talent pipeline removed the biggest bottleneck to our roadmap."</div>
+        <a href="#" class="sc-link">Read Story <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="sc-card gs" style="--delay:.3s">
+      <div class="sc-portrait">
+        <div class="sc-portrait-bg"></div>
+        <div class="sc-portrait-blob"></div>
+        <div class="sc-figure"><div class="sc-head"></div><div class="sc-body-shape"></div></div>
+        <div class="sc-metric-badge"><div class="sc-metric-val">5 wk</div><div class="sc-metric-lbl">Assessment<br>to Roadmap</div></div>
+        <div class="sc-avatar">
+          <div class="sc-av-icon">HC</div>
+          <div class="sc-av-info"><div class="sc-av-name">Health-tech Company</div><div class="sc-av-role">Healthcare · AI Governance</div></div>
+        </div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-quote">"The HALO governance framework gave our HIPAA compliance team a model they could actually approve. First time in three AI programmes."</div>
+        <a href="#" class="sc-link">Read Story <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════ BRIDGE ══════════════════════ -->
+<section id="sec-bridge" class="section">
+  <div class="wrap pad">
+    <div>
+      <div class="eye gu">If This Resonates</div>
+      <h2 class="d-md gu">The Capability, Platform &amp;<br>Engagement Model</h2>
+      <p class="b-lg gu" style="margin-top:12px;max-width:520px">Three adjacent capabilities that address what the assessment uncovers.</p>
+    </div>
+    <div class="bridge-strip">
+      <div class="br-item gs">
+        <div class="br-label">How We Do It →</div>
+        <div class="br-title">AI/ML Engineering</div>
+        <div class="br-body">The engineering practice that closes the gaps the assessment uncovers — MLOps pipelines, model governance, explainability, production monitoring.</div>
+        <a href="#" class="br-arrow">Explore <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+      <div class="br-item gs" style="--delay:.1s">
+        <div class="br-label">AI &amp; Innovation →</div>
+        <div class="br-title">CAFE Framework</div>
+        <div class="br-body">Celsior's modular AI platform — pre-built LLM, RAG, agent orchestration, and governance layers. 12–24 months compressed to 3–9 months.</div>
+        <a href="#" class="br-arrow">Explore <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+      <div class="br-item gs" style="--delay:.2s">
+        <div class="br-label">How We Deliver →</div>
+        <div class="br-title">Strategy-to-Execution</div>
+        <div class="br-body">A time-boxed consulting engagement that converts readiness outputs into a phased, resource-costed transformation programme.</div>
+        <a href="#" class="br-arrow">Explore <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════ FAQ + CTA ══════════════════════ -->
+<section id="sec-faq" class="section">
+  <div class="wrap pad">
+    <div class="faq-lay">
+      <div>
+        <div class="eye gu">Questions</div>
+        <h2 class="gu" style="font-size:clamp(1.6rem,2.4vw,2.2rem);font-weight:700;letter-spacing:-.025em;margin-bottom:36px">Common <em style="font-style:normal;color:var(--accent)">Questions</em></h2>
+        <div class="faq-list">
+          <div class="faq-it gu"><div class="faq-q" onclick="faqT(this)">How long does the assessment take?<div class="faq-ico"><svg viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4M6 2v8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div><div class="faq-a">4–6 weeks from kick-off to final report. Internal time requirement: 2–4 hours per week from a technical lead. Deliverables: readiness score, gap-to-value analysis, 90-day activation plan, and AI governance starter framework.</div></div>
+          <div class="faq-it gu"><div class="faq-q" onclick="faqT(this)">We've run pilots that didn't scale. Is this still relevant?<div class="faq-ico"><svg viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4M6 2v8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div><div class="faq-a">Most relevant at this stage. Post-pilot scaling failures have specific root causes — model drift, integration debt, data degradation — that our assessment is structured to diagnose. In most cases, prior failures trace to one or two remediable gaps.</div></div>
+          <div class="faq-it gu"><div class="faq-q" onclick="faqT(this)">How is this different from a hyperscaler's readiness assessment?<div class="faq-ico"><svg viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4M6 2v8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div><div class="faq-a">Hyperscaler assessments are pre-sales instruments optimised for their own platform stack. Ours is delivery-connected — every gap we identify, our teams can close, with resource estimates and timelines attached.</div></div>
+          <div class="faq-it gu"><div class="faq-q" onclick="faqT(this)">What happens after the assessment?<div class="faq-ico"><svg viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4M6 2v8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div><div class="faq-a">You receive a prioritised remediation roadmap with specific resource estimates and timelines. Execute with your own team, engage Celsior for delivery, or use our CAFE platform to accelerate. No obligation to continue.</div></div>
+        </div>
+      </div>
+      <div class="cta-card gr">
+        <div class="cta-in">
+          <div class="cta-tag">Know Where You Stand</div>
+          <h3 class="cta-hd">Before You Commit<br>the Budget.</h3>
+          <p class="cta-sub">45-minute diagnostic with our practice lead — not a sales representative. No pitch. No obligation.</p>
+          <div class="cta-btns">
+            <button class="btn btn-dk" style="justify-content:center;border-radius:12px;padding:15px 24px;font-size:.88rem">Request AI Readiness Assessment <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7H11.5M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="btn btn-ow" style="justify-content:center;border-radius:12px;padding:15px 24px;font-size:.88rem">Download the AI Readiness Framework</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<script>
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Draggable);
+
+/* ══════════════════════════════════════
+   HERO ENTRANCE + FAN CARDS
+══════════════════════════════════════ */
+// Fan card configurations — perfectly symmetric 4-card fan
+// transform-origin: center 88% means pivot is near card bottom
+// r: rotation in degrees (even -38 -13 +13 +38 step)
+// x: horizontal offset from center (evenly spaced)
+// y: vertical drop (outer cards drop more, matches natural fan arc)
+// z: stacking order
+const fanConfig = [
+  { r: -38, x: -148, y: 52, z: 1 },   // far left
+  { r: -13, x:  -50, y: 14, z: 2 },   // near left
+  { r:  13, x:   50, y: 14, z: 3 },   // near right
+  { r:  38, x:  148, y: 52, z: 4 },   // far right
+];
+const fanCards = document.querySelectorAll('.fan-card');
+// Start: stacked at center, below stage, invisible
+gsap.set(fanCards, { y: 240, opacity: 0, scale: .82, rotation: 0, transformOrigin: 'center 88%' });
+
+// Hero text entrance
+gsap.set(['.h-crumb', '.h-pill'], { opacity: 0 });
+gsap.set('#hero .gu', { opacity: 0, y: 36 });
+gsap.set('.h-stats .hs', { opacity: 0, y: 20 });
+
+const heroTL = gsap.timeline({ delay: .15 });
+heroTL
+  .to('.h-crumb', { opacity: 1, duration: .7, ease: 'power3.out' })
+  .to('.h-pill', { opacity: 1, duration: .6, ease: 'power2.out' }, '-=.3')
+  .to('#hero .gu', { opacity: 1, y: 0, duration: .95, stagger: .12, ease: 'power3.out' }, '-=.3')
+  // Step 1: all cards rise into view together as a stack
+  .to(fanCards, {
+    y: 0, opacity: 1, scale: 1,
+    stagger: .08,
+    duration: .9, ease: 'back.out(1.3)',
+  }, '-=.1')
+  // Step 2: after brief pause, fan out from center to final positions
+  .to(fanCards, {
+    rotation: (i) => fanConfig[i].r,
+    x:        (i) => fanConfig[i].x,
+    y:        (i) => fanConfig[i].y,
+    zIndex:   (i) => fanConfig[i].z,
+    stagger: .07,
+    duration: .85,
+    ease: 'power3.out',
+  }, '+=.12')
+  .to('.h-stats .hs', { opacity: 1, y: 0, stagger: .08, duration: .7, ease: 'power3.out' }, '-=.5');
+
+// Fan hover: outer cards lift upward, inner cards lift slightly
+fanCards.forEach((card, i) => {
+  const cfg = fanConfig[i];
+  // lift amount — outer cards rise more to counteract their arc drop
+  const liftY = cfg.y - (i === 0 || i === 3 ? 28 : 20);
+  card.addEventListener('mouseenter', () => {
+    gsap.to(card, { y: liftY, scale: 1.05, duration: .32, ease: 'power2.out', zIndex: 10 });
+  });
+  card.addEventListener('mouseleave', () => {
+    gsap.to(card, { y: cfg.y, scale: 1, duration: .45, ease: 'power3.out', zIndex: cfg.z });
+  });
+  card.addEventListener('click', () => {
+    const t = document.getElementById('sec-assess');
+    if (t) gsap.to(window, { duration: 1, scrollTo: { y: t, offsetY: 80 }, ease: 'power3.inOut' });
+  });
+});
+
+// Hero grid parallax
+const hGrid = document.getElementById('heroGrid');
+window.addEventListener('mousemove', e => {
+  if (!hGrid) return;
+  hGrid.style.transform = `translate(${(e.clientX / window.innerWidth - .5) * 18}px, ${(e.clientY / window.innerHeight - .5) * 12}px)`;
+}, { passive: true });
+
+/* ══════════════════════════════════════
+   CHALLENGE — STACKED CARDS
+   Card 1 anchored. Cards 2+3 slide up
+   over it via a scrubbed timeline.
+══════════════════════════════════════ */
+(function() {
+  const c0       = document.getElementById('schCard0');
+  const c1       = document.getElementById('schCard1');
+  const c2       = document.getElementById('schCard2');
+  const rail     = document.getElementById('schRail');
+  const railDots = [...rail.querySelectorAll('.sch-rail-dot')];
+  const fills    = [document.getElementById('schFill1'), document.getElementById('schFill2')];
+
+  // Card 1 is already at y:0 and visible.
+  // Push cards 2 + 3 below the viewport before any scroll.
+  gsap.set([c1, c2], { y: '110vh' });
+
+  // Build a timeline with two sequential phases — each covers half of the
+  // total scroll distance. scrub:1 ties it to the scrollbar 1-to-1.
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: '#schScroll',
+      start:   'top top',
+      end:     '+=200%',   // 2 extra viewport-heights of scroll
+      pin:     true,
+      scrub:   1,
+      onUpdate(self) {
+        const seg = self.progress * 2;                         // 0 → 2
+        const act = Math.min(Math.floor(seg + 0.08), 2);
+        railDots.forEach((d, i) => d.classList.toggle('active', i === act));
+        fills.forEach((f, i) => gsap.set(f, { scaleY: Math.max(0, Math.min(1, seg - i)) }));
+        rail.classList.toggle('visible', self.progress > 0.01 && self.progress < 0.99);
+      },
+      onLeave()     { rail.classList.remove('visible'); },
+      onLeaveBack() { rail.classList.remove('visible'); },
+    }
+  });
+
+  // Phase 1: card 2 slides up to y:0; card 1 scales+dims behind it
+  tl.to(c1, { y: 0, ease: 'power2.inOut', duration: 1 })
+    .to(c0,  { scale: 0.93, ease: 'power2.inOut', duration: 1 }, '<');
+
+  // Phase 2: card 3 slides up to y:0; card 2 scales+dims behind it
+  tl.to(c2, { y: 0, ease: 'power2.inOut', duration: 1 })
+    .to(c1,  { scale: 0.93, ease: 'power2.inOut', duration: 1 }, '<');
+
+  // Rail dot click — scroll to that card's position in the pin
+  railDots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      const top = document.getElementById('schScroll').getBoundingClientRect().top + window.scrollY;
+      gsap.to(window, { scrollTo: top + (i / 2) * window.innerHeight * 2, duration: .9, ease: 'power3.inOut' });
+    });
+  });
+})();
+
+/* ══════════════════════════════════════
+   GENERIC SCROLL REVEALS
+══════════════════════════════════════ */
+function rev(sel, vars) {
+  gsap.utils.toArray(sel).forEach(el => {
+    const d = parseFloat(el.style.getPropertyValue('--delay') || 0);
+    gsap.to(el, {
+      scrollTrigger: { trigger: el, start: 'top 90%', end: 'top 55%', toggleActions: 'play none none reverse' },
+      duration: .85, delay: d, ease: 'power3.out', ...vars
+    });
+  });
+}
+rev('.section .gu:not(#hero .gu)', { opacity: 1, y: 0 });
+rev('.section .gr', { opacity: 1, x: 0 });
+rev('.section .gf', { opacity: 1 });
+rev('.section .gs', { opacity: 1, scale: 1 });
+
+/* ══════════════════════════════════════
+   FAQ
+══════════════════════════════════════ */
+function faqT(btn) {
+  const was = btn.classList.contains('open');
+  document.querySelectorAll('.faq-q.open').forEach(b => { b.classList.remove('open'); b.nextElementSibling.classList.remove('open'); });
+  if (!was) { btn.classList.add('open'); btn.nextElementSibling.classList.add('open'); }
+}
+
+/* ══════════════════════════════════════
+   SMOOTH SCROLL
+══════════════════════════════════════ */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (!t) return;
+    e.preventDefault();
+    gsap.to(window, { duration: 1.1, scrollTo: { y: t, offsetY: 80 }, ease: 'power3.inOut' });
+  });
+});
+</script>
+
+<!-- Footer injected by shared JS -->
+<div id="footer-placeholder"></div>
+<script src="/shared.js" defer></script>
+</body>
+</html>

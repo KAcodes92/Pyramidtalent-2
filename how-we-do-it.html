@@ -1,0 +1,2877 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Celsior — AI/ML Engineering: From model development to production operations in regulated industries." />
+  <title>How We Do It › AI/ML Engineering — Celsior</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- shared nav + footer — load before page styles so CSS vars are ready -->
+  <script src="/shared.js" defer></script>
+
+  <style>
+    /* ── Essential tokens (for pre-shared.js paint) ── */
+    :root {
+      --white: #ffffff; --bg: #f5f6fa; --ink: #0d1127; --ink-mid: #3a4060;
+      --muted: #7b82a0; --border: rgba(15,20,50,0.09); --border-md: rgba(15,20,50,0.15);
+      --accent: #2254f4; --accent-lt: rgba(34,84,244,0.09); --nav-h: 68px;
+      --font-head: 'SF Pro Display','SF Pro Text',-apple-system,BlinkMacSystemFont,'Helvetica Neue','Inter',system-ui,sans-serif;
+      --font-body: 'SF Pro Display','SF Pro Text',-apple-system,BlinkMacSystemFont,'Helvetica Neue','Inter',system-ui,sans-serif;
+      --ease-expo: cubic-bezier(0.16,1,0.3,1); --btn-gradient: #000000;
+    }
+    /* ══════════════════════════════════════════════════════
+       HERO — redesigned
+    ══════════════════════════════════════════════════════ */
+
+    /* ── colour palette tokens ── */
+    :root {
+      --c-blue:   #2254f4;
+      --c-cyan:   #00c9e4;
+      --c-violet: #7c3aed;
+      --c-rose:   #f43f5e;
+      --c-amber:  #f59e0b;
+      --c-green:  #10b981;
+    }
+
+    body, * { font-family: 'SF Pro Display','SF Pro Text',-apple-system,BlinkMacSystemFont,'Helvetica Neue',system-ui,sans-serif !important; }
+
+    .hwdi-hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      max-height: 920px;
+      display: flex;
+      align-items: stretch;
+      overflow: hidden;
+      background: #060b1a;
+    }
+
+    /* subtle deep radial glows */
+    .hwdi-hero::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 70% at 75% 40%, rgba(34,84,244,0.18) 0%, transparent 65%),
+        radial-gradient(ellipse 35% 45% at 20% 75%, rgba(124,58,237,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 25% 35% at 50% 10%, rgba(0,201,228,0.08) 0%, transparent 55%);
+    }
+
+    /* noise grain */
+    .hwdi-hero::after {
+      content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.04;
+    }
+
+    .hwdi-hero-canvas { position: absolute; inset: 0; z-index: 0; }
+
+    /* ── two-column grid — 48/52 split ── */
+    .hwdi-hero-inner {
+      position: relative; z-index: 2;
+      width: 100%; max-width: 1400px; margin: 0 auto;
+      padding: calc(var(--nav-h) + 8px) 64px 0;
+      display: grid;
+      grid-template-columns: 46fr 54fr;
+      gap: 0;
+      align-items: center;
+      height: 100%;
+    }
+
+    /* ── LEFT ── */
+    .hwdi-hero-left {
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding-right: 48px;
+      padding-bottom: 136px;
+    }
+
+    /* breadcrumb */
+    .hwdi-breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 12px;
+      font-size: 0.65rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+    }
+    .hwdi-breadcrumb span { color: rgba(255,255,255,0.2); }
+    .hwdi-breadcrumb .bc-current { color: var(--c-cyan); }
+
+    /* eyebrow pill */
+    .hwdi-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 14px 5px 10px;
+      background: rgba(34,84,244,0.12);
+      border: 1px solid rgba(34,84,244,0.28);
+      border-radius: 100px;
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: #7aadff;
+      margin-bottom: 12px;
+      width: fit-content;
+      backdrop-filter: blur(8px);
+    }
+
+    .hwdi-eyebrow-dot {
+      width: 6px; height: 6px;
+      background: var(--c-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--c-cyan);
+      animation: heroDotPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes heroDotPulse {
+      0%,100% { opacity:1; transform:scale(1); box-shadow:0 0 6px var(--c-cyan); }
+      50%      { opacity:.5; transform:scale(1.7); box-shadow:0 0 14px var(--c-cyan); }
+    }
+
+    /* headline — premium, tight, editorial */
+    .hwdi-hero-h1 {
+      font-family: var(--font-head);
+      font-size: clamp(3.8rem, 6.8vw, 8rem);
+      font-weight: 900;
+      letter-spacing: -0.055em;
+      line-height: 0.92;
+      color: #ffffff;
+      margin-bottom: 0;
+    }
+
+    /* "AI & ML Engineering Practice" — small uppercase label above */
+    .hwdi-h1-line1 {
+      display: block;
+      font-size: clamp(0.65rem, 0.9vw, 0.78rem);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+    /* "Built for" + "Regulated" + "Industries" — massive, white, stacked */
+    .hwdi-h1-line2 {
+      display: block;
+      color: #ffffff;
+    }
+    .hwdi-h1-line3 {
+      display: block;
+      color: #ffffff;
+    }
+
+    .hwdi-hero-sub {
+      margin-top: 12px;
+      font-size: clamp(0.88rem, 1.1vw, 1.0rem);
+      font-weight: 400;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.75;
+      max-width: 480px;
+      margin-bottom: 0;
+      color: rgba(255,255,255,0.55);
+    }
+
+    /* ── GLASSMORPHISM STAT CARDS ── single row strip ── */
+    .hwdi-stats-strip-wrap {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 10;
+      padding: 0 64px 28px;
+      pointer-events: none;
+    }
+    .hwdi-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      pointer-events: auto;
+    }
+
+    /* ── STAT CARDS — premium glassmorphism ── */
+    .hwdi-stat-card {
+      position: relative;
+      padding: 22px 24px 20px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(10,14,35,0.55);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      overflow: hidden;
+      cursor: default;
+      transition: border-color 0.35s ease, transform 0.35s var(--ease-expo), box-shadow 0.35s ease;
+    }
+
+    .hwdi-stat-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,255,255,0.18);
+      box-shadow: 0 20px 52px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    }
+
+    /* full-card soft gradient wash from top-left */
+    .hwdi-stat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.13;
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    .hwdi-stat-card.sc-blue::before   { background: radial-gradient(ellipse 120% 100% at 0% 0%, var(--c-blue), transparent 70%); }
+    .hwdi-stat-card.sc-cyan::before   { background: radial-gradient(ellipse 120% 100% at 0% 0%, var(--c-cyan), transparent 70%); }
+    .hwdi-stat-card.sc-violet::before { background: radial-gradient(ellipse 120% 100% at 0% 0%, var(--c-violet), transparent 70%); }
+    .hwdi-stat-card.sc-amber::before  { background: radial-gradient(ellipse 120% 100% at 0% 0%, var(--c-amber), transparent 70%); }
+
+    /* left accent border — colour pill */
+    .hwdi-stat-card::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 18px; bottom: 18px;
+      width: 2.5px;
+      border-radius: 0 2px 2px 0;
+    }
+    .hwdi-stat-card.sc-blue::after   { background: var(--c-blue);   box-shadow: 0 0 12px var(--c-blue); }
+    .hwdi-stat-card.sc-cyan::after   { background: var(--c-cyan);   box-shadow: 0 0 12px var(--c-cyan); }
+    .hwdi-stat-card.sc-violet::after { background: var(--c-violet); box-shadow: 0 0 12px var(--c-violet); }
+    .hwdi-stat-card.sc-amber::after  { background: var(--c-amber);  box-shadow: 0 0 12px var(--c-amber); }
+
+    /* tag label at top */
+    .hwdi-stat-tag {
+      display: block;
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      padding-left: 12px;
+    }
+    .sc-blue   .hwdi-stat-tag { color: var(--c-blue);   }
+    .sc-cyan   .hwdi-stat-tag { color: var(--c-cyan);   }
+    .sc-violet .hwdi-stat-tag { color: var(--c-violet); }
+    .sc-amber  .hwdi-stat-tag { color: var(--c-amber);  }
+
+    .hwdi-stat-num {
+      display: block;
+      font-family: var(--font-head);
+      font-size: clamp(1.35rem, 2vw, 1.8rem);
+      font-weight: 900;
+      letter-spacing: -0.045em;
+      line-height: 1;
+      color: #ffffff;
+      margin-bottom: 6px;
+      padding-left: 12px;
+    }
+
+    .hwdi-stat-label {
+      font-size: 0.68rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.38);
+      line-height: 1.45;
+      letter-spacing: 0.01em;
+      padding-left: 12px;
+    }
+
+    /* ── RIGHT: absolute so it never drives hero height ── */
+    .hwdi-hero-right {
+      position: absolute;
+      top: 0; right: 0;
+      width: 54%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #aiCanvas3d {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: hidden;
+    }
+
+    /* shape label bottom-center */
+    .ai-shape-label {
+      position: absolute; bottom: 28px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.58rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,255,255,0.22);
+      white-space: nowrap;
+      transition: opacity 0.5s ease;
+      z-index: 3;
+    }
+
+    /* shape cycle dots — vertical strip right edge */
+    .ai-shape-dots {
+      position: absolute; top: 50%; right: 8px;
+      transform: translateY(-50%);
+      display: flex; flex-direction: column;
+      gap: 8px; z-index: 3;
+    }
+
+    .ai-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      transition: background 0.35s, transform 0.35s, height 0.35s;
+    }
+
+    .ai-dot.active {
+      background: var(--c-cyan);
+      box-shadow: 0 0 8px var(--c-cyan);
+      transform: scale(1.5);
+      height: 14px;
+      border-radius: 4px;
+    }
+
+    /* scroll hint */
+    .hwdi-scroll-hint {
+      position: absolute; bottom: 28px; left: 64px; z-index: 2;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.58rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+    }
+
+    .hwdi-scroll-line {
+      width: 36px; height: 1px;
+      background: rgba(255,255,255,0.15);
+      position: relative; overflow: hidden;
+    }
+
+    .hwdi-scroll-line::after {
+      content: ''; position: absolute; inset: 0;
+      background: var(--c-cyan);
+      transform: translateX(-100%);
+      animation: scrollLineAnim 2.2s ease-in-out infinite;
+    }
+
+    @keyframes scrollLineAnim {
+      0%   { transform: translateX(-100%); }
+      50%  { transform: translateX(0); }
+      100% { transform: translateX(110%); }
+    }
+
+    /* ── responsive ── */
+    @media (max-width: 1024px) {
+      .hwdi-hero-inner {
+        grid-template-columns: 1fr;
+        padding: calc(var(--nav-h) + 2px) 32px 160px;
+      }
+      .hwdi-hero-left { padding-right: 0; }
+      .hwdi-hero-right { display: none; }
+      .hwdi-stats-strip-wrap { padding: 0 32px 28px; }
+      .hwdi-stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .hwdi-hero-inner { padding: calc(var(--nav-h) + 16px) 20px 200px; }
+      .hwdi-stats-strip-wrap { padding: 0 20px 20px; }
+      .hwdi-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    }
+
+
+    /* ═══════════════════════════════════════════════════════
+       APPLE DESIGN SYSTEM — section tokens
+    ═══════════════════════════════════════════════════════ */
+    :root {
+      --ap-bg:          #f5f5f7;
+      --ap-bg-dark:     #000000;
+      --ap-surface:     #ffffff;
+      --ap-surface-2:   #f5f5f7;
+      --ap-ink:         #1d1d1f;
+      --ap-ink-2:       #424245;
+      --ap-ink-3:       #6e6e73;
+      --ap-ink-4:       #86868b;
+      --ap-border:      rgba(0,0,0,0.08);
+      --ap-border-dark: rgba(255,255,255,0.1);
+      --ap-radius-sm:   10px;
+      --ap-radius-md:   18px;
+      --ap-radius-lg:   28px;
+      --ap-ease:        cubic-bezier(0.25,0.1,0.25,1);
+      --ap-ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    /* ── SECTION SCAFFOLDING ── */
+    .sec { position: relative; z-index: 2; }
+
+    .sec-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    /* Apple-style section label */
+    .sec-eyebrow {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .sec-eyebrow::before { display: none; }
+
+    /* Section heading — large, tight, bold */
+    .sec-h2 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.07;
+      color: var(--ap-ink);
+      margin-bottom: 14px;
+    }
+
+    .sec-lead {
+      font-size: 1.0625rem;
+      font-weight: 400;
+      color: var(--ap-ink-3);
+      line-height: 1.65;
+      max-width: 520px;
+    }
+
+    /* Apple entrance animations */
+    .anim-up    { opacity: 0; transform: translateY(24px); }
+    .anim-left  { opacity: 0; transform: translateX(-20px); }
+    .anim-right { opacity: 0; transform: translateX(20px); }
+    .anim-fade  { opacity: 0; }
+    .anim-scale { opacity: 0; transform: scale(0.95); }
+
+    /* ═══════════════════════════════════════════════════════
+       Z02 — PROBLEM CONTEXT BRIDGE
+    ═══════════════════════════════════════════════════════ */
+    .bridge-sec {
+      background: var(--ap-bg);
+      padding: 96px 0 112px;
+    }
+
+    .bridge-header { margin-bottom: 52px; }
+
+    /* 3-col cards — Apple-style floating glass */
+    .bridge-cards {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 16px;
+      background: none;
+      border: none;
+      border-radius: 0;
+    }
+
+    .bridge-card {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: var(--ap-radius-md);
+      padding: 36px 32px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.05), 0 0 0 0.5px rgba(0,0,0,0.04);
+      transition: transform 0.3s var(--ap-ease), box-shadow 0.3s var(--ap-ease);
+    }
+
+    .bridge-card:hover {
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.10), 0 0 0 0.5px rgba(0,0,0,0.06);
+    }
+
+    .bridge-card-tag {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+      display: block;
+    }
+    .bridge-card-tag::before { display: none; }
+
+    .bridge-card-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--ap-ink);
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+
+    .bridge-card-body {
+      font-size: 0.9375rem;
+      color: var(--ap-ink-3);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .bridge-card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--accent);
+      border-radius: 980px;
+      transition: gap 0.2s var(--ap-ease);
+    }
+    .bridge-card-link:hover { gap: 9px; }
+    .bridge-card-link svg { width: 14px; height: 14px; }
+
+    /* ═══════════════════════════════════════════════════════
+       Z03 — WHAT WE BUILD
+    ═══════════════════════════════════════════════════════ */
+    .build-sec {
+      background: var(--ap-surface);
+      padding: 96px 0 112px;
+      border-top: 1px solid var(--ap-border);
+    }
+
+    .build-header { margin-bottom: 64px; }
+    .build-disciplines { display: flex; flex-direction: column; }
+
+    .discipline {
+      display: grid;
+      grid-template-columns: 56px 1fr 1.4fr;
+      gap: 0 36px;
+      padding: 44px 0;
+      border-bottom: 1px solid var(--ap-border);
+      align-items: start;
+    }
+    .discipline:first-child { border-top: 1px solid var(--ap-border); }
+
+    .disc-num-col {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px; padding-top: 3px;
+    }
+
+    .disc-num {
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.1em; color: var(--accent);
+    }
+
+    .disc-progress-track {
+      width: 1px; height: 72px;
+      background: var(--ap-border); position: relative; overflow: hidden;
+    }
+
+    .disc-progress-fill {
+      position: absolute; top: 0; left: 0; right: 0;
+      background: var(--accent); height: 0%;
+      transition: height 1.1s cubic-bezier(0.16,1,0.3,1);
+    }
+    .discipline.in-view .disc-progress-fill { height: 100%; }
+
+    .disc-left {
+      padding-right: 36px;
+      border-right: 1px solid var(--ap-border);
+    }
+
+    .disc-tag {
+      font-size: 0.6rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 8px;
+    }
+
+    .disc-title {
+      font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
+      font-weight: 600; letter-spacing: -0.025em;
+      color: var(--ap-ink); line-height: 1.25;
+    }
+
+    .disc-right { padding-left: 4px; }
+
+    .disc-body {
+      font-size: 0.9375rem; color: var(--ap-ink-3);
+      line-height: 1.75; margin-bottom: 18px;
+    }
+
+    .disc-bullets { display: flex; flex-direction: column; gap: 6px; }
+
+    .disc-bullet {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 0.875rem; color: var(--ap-ink-2); line-height: 1.5;
+    }
+    .disc-bullet::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--accent); margin-top: 7px; flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+    /*     /*        Z04 — DELIVERY PHASES — sticky-left / cascade-right
+    ═══════════════════════════════════════════════════════ */
+    .deliver-sec {
+      background: #05080f;
+      padding: 0;
+      position: relative;
+    }
+    .deliver-sec::before {
+      content:''; position:absolute; inset:0; pointer-events:none;
+      background:
+        radial-gradient(ellipse 55% 50% at 80% 20%, rgba(34,84,244,.12) 0%,transparent 60%),
+        radial-gradient(ellipse 30% 40% at 10% 80%, rgba(0,201,228,.06) 0%,transparent 55%);
+    }
+
+    /* ── outer wrapper fills the scroll space for sticky to work ── */
+    .deliver-outer {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 48px;
+      gap: 80px;
+    }
+
+    /* ── LEFT: sticky heading panel ── */
+    .deliver-left {
+      position: sticky;
+      top: calc(var(--nav-h) + 32px);
+      padding: 100px 0 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .deliver-sec .sec-eyebrow { color: rgba(255,255,255,.38); margin-bottom: 14px; }
+    .deliver-sec .sec-h2      { color: #f5f5f7; margin-bottom: 16px; }
+    .deliver-sec .sec-lead    { color: rgba(245,245,247,.45); max-width: 340px; }
+
+    /* progress indicator — thin vertical line with travelling dot */
+    .deliver-progress {
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .deliver-prog-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 0;
+      cursor: pointer;
+      opacity: 0.32;
+      transition: opacity 0.4s;
+    }
+    .deliver-prog-item.active { opacity: 1; }
+    .deliver-prog-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,.2);
+      flex-shrink: 0;
+      transition: background .4s, transform .4s, box-shadow .4s;
+    }
+    .deliver-prog-item.active .deliver-prog-dot {
+      background: var(--prog-color, #2254f4);
+      box-shadow: 0 0 10px var(--prog-color, #2254f4);
+      transform: scale(1.4);
+    }
+    .deliver-prog-label {
+      font-size: .72rem; font-weight: 600;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: rgba(255,255,255,.55);
+      transition: color .4s;
+    }
+    .deliver-prog-item.active .deliver-prog-label { color: #fff; }
+    .deliver-prog-item[data-pi="0"] { --prog-color: #2254f4; }
+    .deliver-prog-item[data-pi="1"] { --prog-color: #7c3aed; }
+    .deliver-prog-item[data-pi="2"] { --prog-color: #f43f5e; }
+    .deliver-prog-item[data-pi="3"] { --prog-color: #00c9e4; }
+
+    /* connecting line between dots */
+    .deliver-prog-line {
+      width: 1px; height: 20px;
+      background: rgba(255,255,255,.08);
+      margin-left: 3.5px;
+    }
+
+    /* ── RIGHT: scrolling cards ── */
+    .deliver-right {
+      padding: 100px 0 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── Each phase card ── */
+    .phase-card-wrap {
+      will-change: transform, opacity;
+    }
+
+    .phase-card-new {
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 18px;
+      padding: 32px 32px 36px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .35s, box-shadow .35s, background .35s;
+    }
+
+    .phase-card-new:hover {
+      background: rgba(255,255,255,.09);
+      border-color: rgba(255,255,255,.16);
+      box-shadow: 0 16px 48px rgba(0,0,0,.4);
+    }
+
+    /* coloured top-border accent */
+    .phase-card-new::before {
+      content:'';
+      position:absolute; top:0; left:24px; right:24px; height:1.5px;
+      background: linear-gradient(90deg, transparent, var(--card-color, #2254f4), transparent);
+      opacity: .7;
+    }
+
+    /* subtle glow blob top-right */
+    .phase-card-new::after {
+      content:'';
+      position:absolute; top:-30px; right:-30px;
+      width:120px; height:120px; border-radius:50%;
+      background: var(--card-color, #2254f4);
+      opacity: .06; filter: blur(32px);
+      pointer-events:none;
+    }
+
+    .phase-card-new[data-phase="0"] { --card-color: #2254f4; }
+    .phase-card-new[data-phase="1"] { --card-color: #7c3aed; }
+    .phase-card-new[data-phase="2"] { --card-color: #f43f5e; }
+    .phase-card-new[data-phase="3"] { --card-color: #00c9e4; }
+
+    .phase-card-head {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
+    }
+
+    /* icon */
+    .phase-icon-new {
+      width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      display: flex; align-items: center; justify-content: center;
+      transition: background .35s, border-color .35s;
+    }
+    .phase-card-new:hover .phase-icon-new {
+      background: rgba(255,255,255,.1);
+      border-color: var(--card-color, #2254f4);
+    }
+    .phase-icon-new svg {
+      width: 18px; height: 18px; fill:none;
+      stroke: rgba(255,255,255,.55); stroke-width:1.8;
+      stroke-linecap:round; stroke-linejoin:round;
+      transition: stroke .35s;
+    }
+    .phase-card-new:hover .phase-icon-new svg { stroke: #a8ccff; }
+
+    .phase-head-text { flex: 1; }
+    .phase-step-new {
+      font-size: .58rem; font-weight:700; letter-spacing:.18em;
+      text-transform: uppercase; color: var(--card-color, #2254f4);
+      margin-bottom: 4px;
+    }
+    .phase-title-new {
+      font-size: 1.1rem; font-weight:700; color:#fff;
+      letter-spacing:-.025em; line-height:1.2;
+    }
+
+    .phase-sub-new {
+      font-size: .62rem; font-weight:500; letter-spacing:.07em;
+      text-transform:uppercase; color:rgba(255,255,255,.3);
+      margin-bottom: 14px;
+    }
+
+    .phase-body-new {
+      font-size: .9rem; color:rgba(245,245,247,.58); line-height:1.72;
+    }
+
+    /* differentiator callout */
+    .deliver-diff {
+      margin-top: 0;
+      padding: 0 48px 80px;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+    .deliver-diff-inner {
+      background: rgba(34,84,244,.07);
+      border: 1px solid rgba(34,84,244,.2);
+      border-radius: 16px;
+      padding: 36px 40px;
+      display: flex; align-items:flex-start; gap:28px;
+      position:relative; overflow:hidden;
+      backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    }
+    .deliver-diff-inner::before {
+      content:''; position:absolute;
+      left:0; top:0; bottom:0; width:3px;
+      background:linear-gradient(180deg,#2254f4,#00c9e4);
+    }
+    .deliver-diff-label {
+      font-size:.58rem; font-weight:600; letter-spacing:.16em;
+      text-transform:uppercase; color:var(--accent);
+      flex-shrink:0; padding-top:2px; min-width:110px;
+    }
+    .deliver-diff-title {
+      font-size:1.0625rem; font-weight:600; color:#f5f5f7;
+      letter-spacing:-.02em; line-height:1.35; margin-bottom:8px;
+    }
+    .deliver-diff-body {
+      font-size:.9375rem; color:rgba(245,245,247,.48); line-height:1.7;
+    }
+
+    @media(max-width:1024px){
+      .deliver-outer{ grid-template-columns:1fr; gap:0; padding:0 32px; }
+      .deliver-left { position:relative; top:auto; padding:72px 0 32px; }
+      .deliver-right{ padding:0 0 72px; }
+      .deliver-progress { display:none; }
+      .deliver-diff { padding:0 32px 72px; }
+    }
+    @media(max-width:640px){
+      .deliver-outer{ padding:0 20px; }
+      .deliver-diff { padding:0 20px 60px; }
+      .phase-card-new { padding:24px 22px 28px; }
+    }
+
+
+    ═══════════════════════════════════════════════════════ */
+    .forward-sec {
+      background: var(--ap-bg);
+      padding: 96px 0 112px;
+    }
+
+    .forward-cards {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 14px; margin-top: 52px;
+    }
+
+    .fwd-card {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: var(--ap-radius-md);
+      padding: 32px 28px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+      position: relative; overflow: hidden;
+      transition: transform 0.3s var(--ap-ease), box-shadow 0.3s, border-color 0.3s;
+    }
+    .fwd-card::after {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0; height: 2px;
+      background: var(--accent);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.35s var(--ap-ease);
+    }
+    .fwd-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.10);
+      border-color: rgba(34,84,244,0.15);
+    }
+    .fwd-card:hover::after { transform: scaleX(1); }
+
+    .fwd-card-dir {
+      font-size: 0.6rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ap-ink-4); margin-bottom: 14px;
+    }
+
+    .fwd-card-title {
+      font-size: 1.0625rem; font-weight: 600;
+      color: var(--ap-ink); letter-spacing: -0.02em;
+      line-height: 1.3; margin-bottom: 10px;
+    }
+
+    .fwd-card-body {
+      font-size: 0.9375rem; color: var(--ap-ink-3);
+      line-height: 1.65; margin-bottom: 22px;
+    }
+
+    .fwd-card-cta {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.875rem; font-weight: 500;
+      color: var(--accent);
+      transition: gap 0.2s var(--ap-ease);
+    }
+    .fwd-card-cta:hover { gap: 9px; }
+    .fwd-card-cta svg { width: 14px; height: 14px; }
+
+    /* ═══════════════════════════════════════════════════════
+       Z06 — TECHNOLOGY STACK
+    ═══════════════════════════════════════════════════════ */
+    /* ══ Z06 MARQUEE STACK ══════════════════════════════════ */
+    .stack-sec {
+      background: var(--ap-bg);
+      padding: 96px 0 112px;
+      border-top: 1px solid var(--ap-border);
+    }
+
+    /* white rounded container — like the old design */
+    .stack-marquee-wrap {
+      margin-top: 52px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(0,0,0,0.07);
+      border-radius: var(--ap-radius-md);
+      box-shadow: 0 2px 24px rgba(0,0,0,0.05);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* each row: label left + scrolling strip */
+    .stack-lane {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid rgba(0,0,0,0.055);
+      min-height: 60px;
+    }
+    .stack-lane:last-child { border-bottom: none; }
+
+    /* fixed category label — inside the container */
+    .stack-lane-label {
+      flex-shrink: 0;
+      width: 168px;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ap-ink-4);
+      padding: 0 20px 0 28px;
+      border-right: 1px solid rgba(0,0,0,0.06);
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+    }
+
+    /* the scrolling viewport */
+    .stack-lane-track {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      padding: 10px 0;
+      mask-image: linear-gradient(to right,
+        transparent 0%, black 3%, black 97%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right,
+        transparent 0%, black 3%, black 97%, transparent 100%);
+    }
+
+    /* the belt — 2× pills for seamless loop */
+    .stack-lane-belt {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: max-content;
+      padding: 0 8px;
+      will-change: transform;
+    }
+
+    /* unique speed per lane — more natural, less mechanical */
+    .stack-lane:nth-child(1) .stack-lane-belt { animation: marqueeL 38s linear infinite; }
+    .stack-lane:nth-child(2) .stack-lane-belt { animation: marqueeR 32s linear infinite; }
+    .stack-lane:nth-child(3) .stack-lane-belt { animation: marqueeL 42s linear infinite; }
+    .stack-lane:nth-child(4) .stack-lane-belt { animation: marqueeR 28s linear infinite; }
+    .stack-lane:nth-child(5) .stack-lane-belt { animation: marqueeL 36s linear infinite; }
+    .stack-lane:nth-child(6) .stack-lane-belt { animation: marqueeR 44s linear infinite; }
+    .stack-lane:nth-child(7) .stack-lane-belt { animation: marqueeL 30s linear infinite; }
+
+    /* hover: gently slow rather than hard stop */
+    .stack-lane:hover .stack-lane-belt { animation-play-state: paused; }
+
+    @keyframes marqueeL { from { transform: translateX(0); }    to { transform: translateX(-50%); } }
+    @keyframes marqueeR { from { transform: translateX(-50%); } to { transform: translateX(0); }    }
+
+    /* base chip */
+    .stack-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 15px;
+      border-radius: 980px;
+      background: #f5f5f7;
+      border: 1px solid rgba(0,0,0,0.08);
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--ap-ink-2);
+      white-space: nowrap;
+      cursor: default;
+      user-select: none;
+      transition: border-color 0.22s, color 0.22s, background 0.22s,
+                  box-shadow 0.22s, transform 0.22s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .stack-chip:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    }
+
+    /* ── scattered accent colour classes ───────────────── */
+    .stack-chip.celsior {
+      font-weight: 600;
+    }
+    .stack-chip.celsior::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* blue */
+    .sc-b {
+      background: rgba(34,84,244,0.08)   !important;
+      border-color: rgba(34,84,244,0.22) !important;
+      color: #2254f4 !important;
+    }
+    .sc-b::before { background: #2254f4 !important; box-shadow: 0 0 7px rgba(34,84,244,0.6) !important; }
+
+    /* cyan */
+    .sc-c {
+      background: rgba(0,201,228,0.08)   !important;
+      border-color: rgba(0,201,228,0.28) !important;
+      color: #0093a8 !important;
+    }
+    .sc-c::before { background: #00c9e4 !important; box-shadow: 0 0 7px rgba(0,201,228,0.6) !important; }
+
+    /* violet */
+    .sc-v {
+      background: rgba(124,58,237,0.08)  !important;
+      border-color: rgba(124,58,237,0.26)!important;
+      color: #7c3aed !important;
+    }
+    .sc-v::before { background: #7c3aed !important; box-shadow: 0 0 7px rgba(124,58,237,0.6) !important; }
+
+    /* amber */
+    .sc-a {
+      background: rgba(245,158,11,0.09)  !important;
+      border-color: rgba(245,158,11,0.28)!important;
+      color: #b45309 !important;
+    }
+    .sc-a::before { background: #f59e0b !important; box-shadow: 0 0 7px rgba(245,158,11,0.6) !important; }
+
+    /* rose */
+    .sc-r {
+      background: rgba(244,63,94,0.07)   !important;
+      border-color: rgba(244,63,94,0.24) !important;
+      color: #e11d48 !important;
+    }
+    .sc-r::before { background: #f43f5e !important; box-shadow: 0 0 7px rgba(244,63,94,0.55) !important; }
+
+    /* green */
+    .sc-g {
+      background: rgba(16,185,129,0.08)  !important;
+      border-color: rgba(16,185,129,0.26)!important;
+      color: #0a8a61 !important;
+    }
+    .sc-g::before { background: #10b981 !important; box-shadow: 0 0 7px rgba(16,185,129,0.6) !important; }
+
+    @media (max-width: 1024px) {
+      .stack-lane-label { width: 120px; padding: 0 16px 0 20px; }
+    }
+    @media (max-width: 640px) {
+      .stack-lane-label { width: 90px; font-size: 0.52rem; padding: 0 10px 0 14px; }
+      .stack-chip { font-size: 0.72rem; padding: 5px 12px; }
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       Z07 — THE FULL STORY
+    ═══════════════════════════════════════════════════════ */
+    .story-sec {
+      background: #000000;
+      padding: 96px 0 112px;
+      position: relative; overflow: hidden;
+    }
+
+    .story-sec .sec-h2 { color: #f5f5f7; }
+    .story-sec .sec-lead { color: rgba(245,245,247,0.45); }
+
+    .story-chapters {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 12px; margin-top: 52px;
+    }
+
+    .chapter {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--ap-radius-md);
+      padding: 28px 24px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: background 0.3s var(--ap-ease), border-color 0.3s, transform 0.3s var(--ap-ease);
+    }
+    .chapter:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.14);
+      transform: translateY(-2px);
+    }
+    .chapter.current {
+      background: rgba(34,84,244,0.12);
+      border-color: rgba(34,84,244,0.35);
+    }
+
+    .chapter-dir {
+      font-size: 0.58rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(245,245,247,0.28); margin-bottom: 14px;
+    }
+    .chapter.current .chapter-dir { color: var(--accent); }
+
+    .chapter-title {
+      font-size: 1.0rem; font-weight: 600;
+      color: rgba(245,245,247,0.72); letter-spacing: -0.015em;
+      line-height: 1.3; margin-bottom: 8px;
+    }
+    .chapter.current .chapter-title { color: #f5f5f7; }
+
+    .chapter-sub {
+      font-size: 0.875rem; color: rgba(245,245,247,0.35); line-height: 1.55;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       Z08 — FAQ
+    ═══════════════════════════════════════════════════════ */
+    .faq-sec {
+      background: var(--ap-surface);
+      padding: 96px 0 112px;
+      border-top: 1px solid var(--ap-border);
+    }
+
+    .faq-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; margin-top: 52px;
+    }
+
+    .faq-left {
+      padding-right: 72px;
+      border-right: 1px solid var(--ap-border);
+      position: sticky; top: calc(var(--nav-h) + 32px);
+      height: fit-content;
+    }
+
+    .faq-left-title {
+      font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+      font-weight: 700; letter-spacing: -0.038em;
+      color: var(--ap-ink); line-height: 1.12; margin-bottom: 16px;
+    }
+
+    .faq-left-sub {
+      font-size: 1.0rem; color: var(--ap-ink-3);
+      line-height: 1.65; margin-bottom: 32px;
+    }
+
+    /* Apple pill button */
+    .faq-cta-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px;
+      background: var(--ap-ink); color: #f5f5f7;
+      font-size: 0.9375rem; font-weight: 500;
+      border-radius: 980px;
+      transition: opacity 0.2s, transform 0.2s var(--ap-ease);
+    }
+    .faq-cta-btn:hover { opacity: 0.85; transform: scale(1.02); }
+
+    .faq-right { padding-left: 64px; }
+
+    .faq-item { border-bottom: 1px solid var(--ap-border); }
+    .faq-item:first-child { border-top: 1px solid var(--ap-border); }
+
+    .faq-trigger {
+      width: 100%; display: flex; align-items: flex-start;
+      justify-content: space-between; padding: 22px 0;
+      background: none; border: none; cursor: pointer; gap: 16px; text-align: left;
+    }
+
+    .faq-q {
+      font-size: 1.0rem; font-weight: 500;
+      color: var(--ap-ink); line-height: 1.45;
+      letter-spacing: -0.01em; transition: color 0.25s;
+    }
+
+    .faq-arrow {
+      flex-shrink: 0; width: 22px; height: 22px;
+      margin-top: 1px; color: var(--ap-ink-4);
+    }
+
+    .faq-body { overflow: hidden; height: 0; }
+    .faq-body p {
+      padding-bottom: 22px;
+      font-size: 0.9375rem; color: var(--ap-ink-3); line-height: 1.75;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       FINAL CTA
+    ═══════════════════════════════════════════════════════ */
+    .final-cta {
+      background: #000000;
+      padding: 112px 48px;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .final-cta::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(34,84,244,0.15) 0%, transparent 65%);
+    }
+
+    .final-cta-inner {
+      position: relative; z-index: 1;
+      max-width: 600px; margin: 0 auto;
+    }
+
+    .final-cta-eyebrow {
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 16px;
+    }
+
+    .final-cta-h2 {
+      font-size: clamp(1.75rem, 3.2vw, 2.8rem);
+      font-weight: 700; letter-spacing: -0.04em;
+      color: #f5f5f7; line-height: 1.1; margin-bottom: 14px;
+    }
+
+    .final-cta-sub {
+      font-size: 1.0625rem; color: rgba(245,245,247,0.48);
+      line-height: 1.65; margin-bottom: 40px;
+    }
+
+    .final-cta-btns {
+      display: flex; align-items: center;
+      justify-content: center; gap: 12px; flex-wrap: wrap;
+    }
+
+    /* Apple pill primary button */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 13px 26px;
+      background: var(--accent); color: #fff;
+      font-size: 0.9375rem; font-weight: 500;
+      border-radius: 980px;
+      transition: opacity 0.2s, transform 0.2s var(--ap-ease), box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      opacity: 0.88; transform: scale(1.02);
+      box-shadow: 0 8px 28px rgba(34,84,244,0.38);
+    }
+
+    /* Apple pill ghost button */
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 12px 24px;
+      border: 1.5px solid rgba(245,245,247,0.2);
+      color: rgba(245,245,247,0.72);
+      font-size: 0.9375rem; font-weight: 500;
+      border-radius: 980px;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .btn-ghost:hover {
+      border-color: rgba(245,245,247,0.45);
+      color: #f5f5f7; background: rgba(255,255,255,0.06);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      .sec-inner { padding: 0 32px; }
+      .bridge-cards { grid-template-columns: 1fr; }
+      .forward-cards { grid-template-columns: 1fr 1fr; }
+      .deliver-phases { grid-template-columns: 1fr 1fr; }
+      .deliver-phases::before { display: none; }
+      .story-chapters { grid-template-columns: 1fr 1fr; }
+      .faq-grid { grid-template-columns: 1fr; }
+      .faq-left { position: relative; top: auto; padding-right: 0; border-right: none; border-bottom: 1px solid var(--ap-border); padding-bottom: 36px; margin-bottom: 36px; }
+      .faq-right { padding-left: 0; }
+      .discipline { grid-template-columns: 48px 1fr; }
+      .disc-left { grid-column: 2; border-right: none; border-bottom: 1px solid var(--ap-border); padding-bottom: 18px; margin-bottom: 18px; }
+      .disc-right { grid-column: 2; }
+      .deliver-diff { flex-direction: column; gap: 12px; }
+    }
+    @media (max-width: 640px) {
+      .bridge-sec, .build-sec, .deliver-sec, .forward-sec,
+      .stack-sec, .story-sec, .faq-sec { padding: 72px 0; }
+      .sec-inner { padding: 0 20px; }
+      .discipline { grid-template-columns: 1fr; }
+      .disc-num-col { display: none; }
+      .deliver-phases, .story-chapters { grid-template-columns: 1fr; }
+      .forward-cards { grid-template-columns: 1fr; }
+
+      .final-cta { padding: 80px 20px; }
+    }
+
+  </style>
+
+<body data-page="how">
+
+<!-- Page progress bar -->
+<div id="page-progress"></div>
+
+<section class="hwdi-hero" id="hero">
+  <canvas class="hwdi-hero-canvas" id="heroCanvas"></canvas>
+
+  <div class="hwdi-hero-inner">
+
+    <!-- LEFT -->
+    <div class="hwdi-hero-left">
+      <div class="hwdi-breadcrumb anim-up" id="bc">
+        How we Do it <span>›</span> AI &amp; Data <span>›</span>
+        <span class="bc-current">AI/ML Engineering</span>
+      </div>
+
+      <div class="hwdi-eyebrow anim-up" id="ey">
+        <span class="hwdi-eyebrow-dot"></span>
+        AI &amp; Data Practice
+      </div>
+
+      <h1 class="hwdi-hero-h1 anim-up" id="h1">
+        <span class="hwdi-h1-line1">AI/ML Engineering</span>
+        <span class="hwdi-h1-line2">Built for Regulated</span>
+        <span class="hwdi-h1-line3">Industries.</span>
+      </h1>
+
+      <p class="hwdi-hero-sub anim-up" id="hs">
+        From model development to production operations — where AI decisions
+        are audited, not just acknowledged.
+      </p>
+
+    </div><!-- end .hwdi-hero-left -->
+
+    <!-- RIGHT: 3D particle canvas -->
+    <div class="hwdi-hero-right" id="aiCanvasWrap">
+      <canvas id="aiCanvas3d"></canvas>
+      <div class="ai-shape-label" id="aiShapeLabel">Neural Network</div>
+      <div class="ai-shape-dots" id="aiShapeDots">
+        <div class="ai-dot active"></div>
+        <div class="ai-dot"></div>
+        <div class="ai-dot"></div>
+        <div class="ai-dot"></div>
+        <div class="ai-dot"></div>
+      </div>
+    </div>
+
+  </div><!-- end .hwdi-hero-inner -->
+
+  <!-- absolute stats strip — spans full width at bottom -->
+  <div class="hwdi-stats-strip-wrap">
+    <div class="hwdi-stats-grid">
+      <div class="hwdi-stat-card sc-blue anim-up">
+        <span class="hwdi-stat-tag">Delivery Speed</span>
+        <span class="hwdi-stat-num" data-target="55">0%</span>
+        <span class="hwdi-stat-label">Faster AI delivery cycles vs. industry average</span>
+      </div>
+      <div class="hwdi-stat-card sc-cyan anim-up">
+        <span class="hwdi-stat-tag">Time to Production</span>
+        <span class="hwdi-stat-num">3–9 mo</span>
+        <span class="hwdi-stat-label">From pilot to production-grade deployment</span>
+      </div>
+      <div class="hwdi-stat-card sc-violet anim-up">
+        <span class="hwdi-stat-tag">Recognition</span>
+        <span class="hwdi-stat-num">Gartner</span>
+        <span class="hwdi-stat-label">EazyML cited in Gartner Market Guide for XAI</span>
+      </div>
+      <div class="hwdi-stat-card sc-amber anim-up">
+        <span class="hwdi-stat-tag">Governance</span>
+        <span class="hwdi-stat-num">HALO</span>
+        <span class="hwdi-stat-label">Addresses the 40% AI project failure rate</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hwdi-scroll-hint">
+    <div class="hwdi-scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     Z02 — PROBLEM CONTEXT BRIDGE
+══════════════════════════════════════════════════════════ -->
+<section class="bridge-sec sec" id="bridgeSec">
+  <div class="sec-inner">
+    <div class="bridge-header">
+      <div class="sec-eyebrow anim-up">This Capability Addresses</div>
+      <h2 class="sec-h2 anim-up">Three Business Problems<br>This Practice Solves</h2>
+      <p class="sec-lead anim-up">If you found this page without reading the business context first — here's where AI/ML Engineering fits.</p>
+    </div>
+
+    <div class="bridge-cards">
+      <div class="bridge-card anim-up">
+        <div class="bridge-card-tag">What we Solve</div>
+        <h3 class="bridge-card-title">AI Readiness</h3>
+        <p class="bridge-card-body">If your organisation can't move AI pilots to production, AI/ML Engineering is the practice that closes the infrastructure, governance, and pipeline gaps standing in the way.</p>
+        <a href="index.html" class="bridge-card-link">Explore AI Readiness
+          <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7h9M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+      <div class="bridge-card anim-up">
+        <div class="bridge-card-tag">What we Solve</div>
+        <h3 class="bridge-card-title">Enterprise AI Enablement</h3>
+        <p class="bridge-card-body">For organisations ready to scale beyond pilots, this practice provides the production architecture, team structure, and operating model for enterprise-wide AI deployment.</p>
+        <a href="index.html" class="bridge-card-link">Explore AI Enablement
+          <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7h9M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+      <div class="bridge-card anim-up">
+        <div class="bridge-card-tag">What we Solve</div>
+        <h3 class="bridge-card-title">Intelligent Automation</h3>
+        <p class="bridge-card-body">When automation evolves from rules-based RPA to AI-powered decisions — anomaly detection, document intelligence, predictive routing — this is the engineering layer that makes it reliable.</p>
+        <a href="index.html" class="bridge-card-link">Explore Automation
+          <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7h9M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     Z03 — WHAT WE BUILD
+══════════════════════════════════════════════════════════ -->
+<section class="build-sec sec" id="buildSec">
+  <div class="sec-inner">
+    <div class="build-header">
+      <div class="sec-eyebrow anim-left">What We Build</div>
+      <h2 class="sec-h2 anim-left">Five Engineering Disciplines,<br>One Integrated Practice</h2>
+    </div>
+
+    <div class="build-disciplines">
+
+      <!-- Discipline 1 -->
+      <div class="discipline" data-disc="1">
+        <div class="disc-num-col">
+          <span class="disc-num">01</span>
+          <div class="disc-progress-track"><div class="disc-progress-fill"></div></div>
+        </div>
+        <div class="disc-left">
+          <div class="disc-tag">Model Development</div>
+          <h3 class="disc-title">Model Development &amp; Validation</h3>
+        </div>
+        <div class="disc-right">
+          <p class="disc-body">Models built for your specific business problem — not generic reference architectures. Every engagement starts with a feasibility validation: data quality, feature availability, and business metric alignment before model architecture is decided.</p>
+          <div class="disc-bullets">
+            <div class="disc-bullet">Supervised, unsupervised, and reinforcement learning across standard and custom architectures</div>
+            <div class="disc-bullet">Validation against business KPIs, not just statistical benchmarks</div>
+            <div class="disc-bullet">Explainability instrumented from development stage via SHAP and EazyML — not retrofitted post-deployment</div>
+            <div class="disc-bullet">Bias assessment and fairness evaluation for credit, underwriting, and clinical AI</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Discipline 2 -->
+      <div class="discipline" data-disc="2">
+        <div class="disc-num-col">
+          <span class="disc-num">02</span>
+          <div class="disc-progress-track"><div class="disc-progress-fill"></div></div>
+        </div>
+        <div class="disc-left">
+          <div class="disc-tag">MLOps</div>
+          <h3 class="disc-title">MLOps Pipeline Architecture</h3>
+        </div>
+        <div class="disc-right">
+          <p class="disc-body">The gap between a validated model and a production AI system is almost entirely an MLOps problem. We design and build the deployment, monitoring, and retraining infrastructure that keeps AI systems performing — not just launching.</p>
+          <div class="disc-bullets">
+            <div class="disc-bullet">Model registry with versioning, lineage, approval workflows, and rollback</div>
+            <div class="disc-bullet">Containerised deployment on Azure ML, AWS SageMaker, Databricks, and GCP Vertex AI</div>
+            <div class="disc-bullet">Automated retraining pipelines triggered by data drift, performance degradation, or schedule</div>
+            <div class="disc-bullet">CI/CD pipeline integration — the same engineering rigour for AI as for application software</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Discipline 3 -->
+      <div class="discipline" data-disc="3">
+        <div class="disc-num-col">
+          <span class="disc-num">03</span>
+          <div class="disc-progress-track"><div class="disc-progress-fill"></div></div>
+        </div>
+        <div class="disc-left">
+          <div class="disc-tag">Governance</div>
+          <h3 class="disc-title">Explainable AI &amp; Governance</h3>
+        </div>
+        <div class="disc-right">
+          <p class="disc-body">In Banking, Insurance, and Healthcare, model decisions have regulatory consequences. Our explainability practice — grounded in EazyML (Gartner-recognised) and the HALO Framework — ensures every model meets the auditability standards that regulated industries require.</p>
+          <div class="disc-bullets">
+            <div class="disc-bullet">SHAP-based feature attribution per prediction at the granularity regulators require</div>
+            <div class="disc-bullet">Model documentation aligned to OCC SR 11-7, EU AI Act risk tiers, and HIPAA AI provisions</div>
+            <div class="disc-bullet">Full audit trail: inputs, outputs, explanations, and governance decisions — examination-ready</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Discipline 4 -->
+      <div class="discipline" data-disc="4">
+        <div class="disc-num-col">
+          <span class="disc-num">04</span>
+          <div class="disc-progress-track"><div class="disc-progress-fill"></div></div>
+        </div>
+        <div class="disc-left">
+          <div class="disc-tag">Agentic AI</div>
+          <h3 class="disc-title">Agentic AI &amp; LLM Engineering</h3>
+        </div>
+        <div class="disc-right">
+          <p class="disc-body">Enterprise LLM deployment requires governed infrastructure — not just prompt engineering. Celsior's CAFE platform provides the agent orchestration, RAG pipelines, and compliance controls that regulated enterprises require before LLM systems interact with sensitive data.</p>
+          <div class="disc-bullets">
+            <div class="disc-bullet">RAG pipeline engineering — hybrid retrieval for superior accuracy across structured and unstructured data</div>
+            <div class="disc-bullet">Agentic workflow orchestration via CAFE: multi-agent architecture, LLM-agnostic, platform-agnostic</div>
+            <div class="disc-bullet">Connects to Agentforce, Azure AI, and Bedrock through PACE — unified governance and observability</div>
+            <div class="disc-bullet">Hallucination mitigation: confidence scoring, grounding strategies, and human escalation via HALO</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Discipline 5 -->
+      <div class="discipline" data-disc="5">
+        <div class="disc-num-col">
+          <span class="disc-num">05</span>
+          <div class="disc-progress-track"><div class="disc-progress-fill"></div></div>
+        </div>
+        <div class="disc-left">
+          <div class="disc-tag">Industry Verticals</div>
+          <h3 class="disc-title">Regulated Industry AI</h3>
+        </div>
+        <div class="disc-right">
+          <p class="disc-body">Our deepest production experience is in the verticals where model decisions carry the highest stakes.</p>
+          <div class="disc-bullets">
+            <div class="disc-bullet">Insurance: claims fraud scoring (ClaimX), underwriting risk modelling, actuarial data engineering</div>
+            <div class="disc-bullet">Banking &amp; FS: credit risk AI, AML monitoring, document automation — with EazyML explainability</div>
+            <div class="disc-bullet">Healthcare: prior authorisation AI, revenue cycle analytics, HIPAA-compliant PHI processing</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     Z04 — DELIVERY APPROACH
+══════════════════════════════════════════════════════════ -->
+<section class="deliver-sec sec" id="deliverSec">
+
+  <div class="deliver-outer">
+
+    <!-- ── LEFT: sticky heading + progress nav ── -->
+    <div class="deliver-left">
+      <div class="sec-eyebrow anim-up">How We Deliver It</div>
+      <h2 class="sec-h2 anim-up">Four Defined<br>Phases.</h2>
+      <p class="sec-lead anim-up">A structured, time-boxed delivery model built for regulated enterprise programmes. Not open-ended workstreams.</p>
+
+      <!-- vertical progress indicator -->
+      <div class="deliver-progress" id="deliverProgress">
+        <div class="deliver-prog-item active" data-pi="0" data-target="0">
+          <div class="deliver-prog-dot"></div>
+          <span class="deliver-prog-label">Validate</span>
+        </div>
+        <div class="deliver-prog-line"></div>
+        <div class="deliver-prog-item" data-pi="1" data-target="1">
+          <div class="deliver-prog-dot"></div>
+          <span class="deliver-prog-label">Build</span>
+        </div>
+        <div class="deliver-prog-line"></div>
+        <div class="deliver-prog-item" data-pi="2" data-target="2">
+          <div class="deliver-prog-dot"></div>
+          <span class="deliver-prog-label">Govern</span>
+        </div>
+        <div class="deliver-prog-line"></div>
+        <div class="deliver-prog-item" data-pi="3" data-target="3">
+          <div class="deliver-prog-dot"></div>
+          <span class="deliver-prog-label">Operate</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT: cascading phase cards ── -->
+    <div class="deliver-right" id="deliverRight">
+
+      <div class="phase-card-wrap" data-card="0">
+        <div class="phase-card-new" data-phase="0">
+          <div class="phase-card-head">
+            <div class="phase-icon-new">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/><path d="M8 11l2 2 4-4"/></svg>
+            </div>
+            <div class="phase-head-text">
+              <div class="phase-step-new">Phase 01</div>
+              <div class="phase-title-new">Validate</div>
+            </div>
+          </div>
+          <div class="phase-sub-new">Data &amp; Use Case · 2–3 weeks</div>
+          <p class="phase-body-new">Data quality, feature availability, and business metric alignment checked before build begins. Output: go/no-go report.</p>
+        </div>
+      </div>
+
+      <div class="phase-card-wrap" data-card="1">
+        <div class="phase-card-new" data-phase="1">
+          <div class="phase-card-head">
+            <div class="phase-icon-new">
+              <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="4" rx="1.5"/><rect x="2" y="10" width="20" height="4" rx="1.5"/><rect x="2" y="17" width="20" height="4" rx="1.5"/></svg>
+            </div>
+            <div class="phase-head-text">
+              <div class="phase-step-new">Phase 02</div>
+              <div class="phase-title-new">Build</div>
+            </div>
+          </div>
+          <div class="phase-sub-new">Model &amp; MLOps · 6–12 weeks</div>
+          <p class="phase-body-new">Model development, MLOps pipeline, model registry, deployment automation, and monitoring instrumentation.</p>
+        </div>
+      </div>
+
+      <div class="phase-card-wrap" data-card="2">
+        <div class="phase-card-new" data-phase="2">
+          <div class="phase-card-head">
+            <div class="phase-icon-new">
+              <svg viewBox="0 0 24 24"><path d="M12 2L3 6v6c0 5.25 3.75 10.15 9 11.25C18.25 22.15 21 17.25 21 12V6l-9-4z"/></svg>
+            </div>
+            <div class="phase-head-text">
+              <div class="phase-step-new">Phase 03</div>
+              <div class="phase-title-new">Govern</div>
+            </div>
+          </div>
+          <div class="phase-sub-new">Explainability &amp; Compliance · 2–4 weeks</div>
+          <p class="phase-body-new">SHAP/EazyML explainability, model documentation, bias assessment, regulatory artefacts. UAT against defined acceptance criteria.</p>
+        </div>
+      </div>
+
+      <div class="phase-card-wrap" data-card="3">
+        <div class="phase-card-new" data-phase="3">
+          <div class="phase-card-head">
+            <div class="phase-icon-new">
+              <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="phase-head-text">
+              <div class="phase-step-new">Phase 04</div>
+              <div class="phase-title-new">Operate</div>
+            </div>
+          </div>
+          <div class="phase-sub-new">Production &amp; Monitoring · Ongoing</div>
+          <p class="phase-body-new">CI/CD deployment, PACE-powered observability, retraining cadence, drift thresholds, operational runbooks. SLA-governed.</p>
+        </div>
+      </div>
+
+    </div><!-- .deliver-right -->
+  </div><!-- .deliver-outer -->
+
+  <!-- differentiator callout — full width -->
+  <div class="deliver-diff">
+    <div class="deliver-diff-inner anim-up">
+      <div class="deliver-diff-label">How This Differs</div>
+      <div>
+        <h4 class="deliver-diff-title">We treat deployment as a starting condition — not a finish line.</h4>
+        <p class="deliver-diff-body">Drift detection, retraining, governance audits, and incident response are core engineering functions in every Celsior engagement. They determine whether an AI investment keeps returning value — or quietly degrades into a liability.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+
+<!-- ══════════════════════════════════════════════════════════
+     Z05 — FORWARD BRIDGE
+══════════════════════════════════════════════════════════ -->
+<section class="forward-sec sec" id="forwardSec">
+  <div class="sec-inner">
+    <div class="sec-eyebrow anim-up">Turning This Into an Engagement</div>
+    <h2 class="sec-h2 anim-up">The Delivery Models That<br>Execute This Capability</h2>
+
+    <div class="forward-cards">
+      <div class="fwd-card anim-scale">
+        <div class="fwd-card-dir">How we Deliver →</div>
+        <h3 class="fwd-card-title">Strategy-to-Execution</h3>
+        <p class="fwd-card-body">For AI/ML engagements that start with an architecture or build-vs-buy question — a time-boxed consulting engagement producing a decision-grade recommendation before development investment begins.</p>
+        <a href="index.html" class="fwd-card-cta">Explore Delivery Model
+          <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7h9M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+      <div class="fwd-card anim-scale">
+        <div class="fwd-card-dir">How we Deliver →</div>
+        <h3 class="fwd-card-title">Dedicated Engineering Pods</h3>
+        <p class="fwd-card-body">For organisations with a defined architecture and an active programme — a production-configured AI/ML team assembled from Celsior's skills database and deployed within 2–4 weeks.</p>
+        <a href="index.html" class="fwd-card-cta">Explore Engineering Pods
+          <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7h9M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+      <div class="fwd-card anim-scale">
+        <div class="fwd-card-dir">Industries →</div>
+        <h3 class="fwd-card-title">Banking, Insurance, Healthcare</h3>
+        <p class="fwd-card-body">The three verticals where explainability and governance are regulatory requirements — and where our production deployments are deepest.</p>
+        <a href="index.html" class="fwd-card-cta">See Industry Practices
+          <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7h9M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     Z06 — TECHNOLOGY STACK
+══════════════════════════════════════════════════════════ -->
+<section class="stack-sec sec" id="stackSec">
+  <div class="sec-inner">
+    <div class="sec-eyebrow anim-left">Platforms We Engineer On</div>
+    <h2 class="sec-h2 anim-left">Platform-Agnostic in Recommendation.<br>Platform-Deep in Delivery.</h2>
+
+    <div class="stack-marquee-wrap">
+    <div class="stack-lane">
+      <div class="stack-lane-label">ML Platforms</div>
+      <div class="stack-lane-track">
+        <div class="stack-lane-belt">
+          <span class="stack-chip sc-b">Azure ML</span>
+          <span class="stack-chip">AWS SageMaker</span>
+          <span class="stack-chip sc-v">Databricks ML</span>
+          <span class="stack-chip">GCP Vertex AI</span>
+          <span class="stack-chip">KNIME</span>
+          <span class="stack-chip sc-c">Azure ML Studio</span>
+          <span class="stack-chip">Amazon SageMaker</span>
+          <span class="stack-chip sc-g">Google Vertex AI</span>
+          <span class="stack-chip sc-b">Azure ML</span>
+          <span class="stack-chip">AWS SageMaker</span>
+          <span class="stack-chip sc-v">Databricks ML</span>
+          <span class="stack-chip">GCP Vertex AI</span>
+          <span class="stack-chip">KNIME</span>
+          <span class="stack-chip sc-c">Azure ML Studio</span>
+          <span class="stack-chip">Amazon SageMaker</span>
+          <span class="stack-chip sc-g">Google Vertex AI</span>
+        </div>
+      </div>
+    </div>
+    <div class="stack-lane">
+      <div class="stack-lane-label">Data Engineering</div>
+      <div class="stack-lane-track">
+        <div class="stack-lane-belt">
+          <span class="stack-chip sc-a">Apache Spark</span>
+          <span class="stack-chip">Kafka</span>
+          <span class="stack-chip sc-b">MuleSoft</span>
+          <span class="stack-chip">Azure Data Factory</span>
+          <span class="stack-chip sc-v">Databricks Delta</span>
+          <span class="stack-chip sc-c">dbt</span>
+          <span class="stack-chip">Airbyte</span>
+          <span class="stack-chip sc-a">Apache Spark</span>
+          <span class="stack-chip">Kafka</span>
+          <span class="stack-chip sc-b">MuleSoft</span>
+          <span class="stack-chip">Azure Data Factory</span>
+          <span class="stack-chip sc-v">Databricks Delta</span>
+          <span class="stack-chip sc-c">dbt</span>
+          <span class="stack-chip">Airbyte</span>
+        </div>
+      </div>
+    </div>
+    <div class="stack-lane">
+      <div class="stack-lane-label">Cloud Data</div>
+      <div class="stack-lane-track">
+        <div class="stack-lane-belt">
+          <span class="stack-chip celsior sc-c">Snowflake</span>
+          <span class="stack-chip">Azure Synapse</span>
+          <span class="stack-chip sc-a">AWS Redshift</span>
+          <span class="stack-chip sc-b">BigQuery</span>
+          <span class="stack-chip">Databricks</span>
+          <span class="stack-chip celsior sc-c">Snowflake CoE</span>
+          <span class="stack-chip">AWS S3 + Glue</span>
+          <span class="stack-chip sc-g">Azure Data Lake</span>
+          <span class="stack-chip celsior sc-c">Snowflake</span>
+          <span class="stack-chip">Azure Synapse</span>
+          <span class="stack-chip sc-a">AWS Redshift</span>
+          <span class="stack-chip sc-b">BigQuery</span>
+          <span class="stack-chip">Databricks</span>
+          <span class="stack-chip celsior sc-c">Snowflake CoE</span>
+          <span class="stack-chip">AWS S3 + Glue</span>
+          <span class="stack-chip sc-g">Azure Data Lake</span>
+        </div>
+      </div>
+    </div>
+    <div class="stack-lane">
+      <div class="stack-lane-label">AI Platform</div>
+      <div class="stack-lane-track">
+        <div class="stack-lane-belt">
+          <span class="stack-chip celsior sc-v">CAFE (Celsior)</span>
+          <span class="stack-chip celsior sc-b">PACE (Celsior)</span>
+          <span class="stack-chip celsior sc-r">HALO (Celsior)</span>
+          <span class="stack-chip celsior sc-a">Synthetix (Celsior)</span>
+          <span class="stack-chip celsior sc-g">ClaimX (Celsior)</span>
+          <span class="stack-chip celsior sc-c">CAFE Agent Layer</span>
+          <span class="stack-chip celsior sc-b">PACE Observability</span>
+          <span class="stack-chip celsior sc-v">CAFE (Celsior)</span>
+          <span class="stack-chip celsior sc-b">PACE (Celsior)</span>
+          <span class="stack-chip celsior sc-r">HALO (Celsior)</span>
+          <span class="stack-chip celsior sc-a">Synthetix (Celsior)</span>
+          <span class="stack-chip celsior sc-g">ClaimX (Celsior)</span>
+          <span class="stack-chip celsior sc-c">CAFE Agent Layer</span>
+          <span class="stack-chip celsior sc-b">PACE Observability</span>
+        </div>
+      </div>
+    </div>
+    <div class="stack-lane">
+      <div class="stack-lane-label">LLM &amp; Agents</div>
+      <div class="stack-lane-track">
+        <div class="stack-lane-belt">
+          <span class="stack-chip">OpenAI GPT-4o</span>
+          <span class="stack-chip sc-b">Azure OpenAI</span>
+          <span class="stack-chip">Agentforce</span>
+          <span class="stack-chip sc-a">AWS Bedrock</span>
+          <span class="stack-chip celsior sc-v">LLM-agnostic via CAFE</span>
+          <span class="stack-chip sc-r">Anthropic Claude</span>
+          <span class="stack-chip sc-c">Google Gemini</span>
+          <span class="stack-chip">Mistral</span>
+          <span class="stack-chip">OpenAI GPT-4o</span>
+          <span class="stack-chip sc-b">Azure OpenAI</span>
+          <span class="stack-chip">Agentforce</span>
+          <span class="stack-chip sc-a">AWS Bedrock</span>
+          <span class="stack-chip celsior sc-v">LLM-agnostic via CAFE</span>
+          <span class="stack-chip sc-r">Anthropic Claude</span>
+          <span class="stack-chip sc-c">Google Gemini</span>
+          <span class="stack-chip">Mistral</span>
+        </div>
+      </div>
+    </div>
+    <div class="stack-lane">
+      <div class="stack-lane-label">Explainability</div>
+      <div class="stack-lane-track">
+        <div class="stack-lane-belt">
+          <span class="stack-chip celsior sc-v">EazyML XAI</span>
+          <span class="stack-chip">SHAP</span>
+          <span class="stack-chip sc-c">LIME</span>
+          <span class="stack-chip celsior sc-a">Gartner-Recognised</span>
+          <span class="stack-chip">Feature Attribution</span>
+          <span class="stack-chip sc-b">Model Cards</span>
+          <span class="stack-chip sc-r">Bias Detection</span>
+          <span class="stack-chip">Fairness Metrics</span>
+          <span class="stack-chip celsior sc-v">EazyML XAI</span>
+          <span class="stack-chip">SHAP</span>
+          <span class="stack-chip sc-c">LIME</span>
+          <span class="stack-chip celsior sc-a">Gartner-Recognised</span>
+          <span class="stack-chip">Feature Attribution</span>
+          <span class="stack-chip sc-b">Model Cards</span>
+          <span class="stack-chip sc-r">Bias Detection</span>
+          <span class="stack-chip">Fairness Metrics</span>
+        </div>
+      </div>
+    </div>
+    <div class="stack-lane">
+      <div class="stack-lane-label">Observability</div>
+      <div class="stack-lane-track">
+        <div class="stack-lane-belt">
+          <span class="stack-chip celsior sc-c">Dynatrace</span>
+          <span class="stack-chip">Datadog</span>
+          <span class="stack-chip sc-g">MLflow</span>
+          <span class="stack-chip sc-b">Evidently AI</span>
+          <span class="stack-chip celsior sc-v">PACE runtime layer</span>
+          <span class="stack-chip">Prometheus</span>
+          <span class="stack-chip sc-a">Grafana</span>
+          <span class="stack-chip">OpenTelemetry</span>
+          <span class="stack-chip celsior sc-c">Dynatrace</span>
+          <span class="stack-chip">Datadog</span>
+          <span class="stack-chip sc-g">MLflow</span>
+          <span class="stack-chip sc-b">Evidently AI</span>
+          <span class="stack-chip celsior sc-v">PACE runtime layer</span>
+          <span class="stack-chip">Prometheus</span>
+          <span class="stack-chip sc-a">Grafana</span>
+          <span class="stack-chip">OpenTelemetry</span>
+        </div>
+      </div>
+    </div>
+    </div><!-- end stack-marquee-wrap -->
+    </div><!-- end sec-inner -->
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     Z07 — THE FULL STORY
+══════════════════════════════════════════════════════════ -->
+<section class="story-sec sec" id="storySec">
+  <div class="sec-inner">
+    <div class="sec-eyebrow anim-up" style="color:rgba(255,255,255,0.4)">The Full Story</div>
+    <h2 class="sec-h2 anim-up">You Are Reading Chapter 2.</h2>
+    <p class="sec-lead anim-up">Here are the other three chapters that complete the picture.</p>
+
+    <div class="story-chapters">
+      <div class="chapter anim-up">
+        <div class="chapter-dir">What we Solve →</div>
+        <h3 class="chapter-title">AI Readiness</h3>
+        <p class="chapter-sub">The business problem this capability is the technical answer to.</p>
+      </div>
+      <div class="chapter current anim-up">
+        <div class="chapter-dir">← You Are Here</div>
+        <h3 class="chapter-title">AI/ML Engineering</h3>
+        <p class="chapter-sub">Model development, MLOps, explainability, and agentic AI — in production, in regulated industries.</p>
+      </div>
+      <div class="chapter anim-up">
+        <div class="chapter-dir">How we Deliver →</div>
+        <h3 class="chapter-title">Dedicated Pods</h3>
+        <p class="chapter-sub">Pre-configured AI/ML engineering teams deployed in 2–4 weeks.</p>
+      </div>
+      <div class="chapter anim-up">
+        <div class="chapter-dir">AI &amp; Innovation →</div>
+        <h3 class="chapter-title">CAFE │ PACE │ HALO</h3>
+        <p class="chapter-sub">The Celsior platform ecosystem that accelerates and governs every AI/ML engagement.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     Z08 — FAQ
+══════════════════════════════════════════════════════════ -->
+<section class="faq-sec sec" id="faqSec">
+  <div class="sec-inner">
+    <div class="faq-grid">
+      <div class="faq-left anim-left">
+        <div class="sec-eyebrow">Questions</div>
+        <h2 class="faq-left-title">Common questions about our AI/ML Engineering practice</h2>
+        <p class="faq-left-sub">Can't find the answer? Talk to our practice lead — 30-minute architecture review, no deck required.</p>
+        <a href="index.html#contact" class="faq-cta-btn">Request an Architecture Review
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2.5 7h9M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+      <div class="faq-right">
+        <div class="faq-item anim-up">
+          <button class="faq-trigger" aria-expanded="false">
+            <span class="faq-q">How does Celsior integrate with an existing development team?</span>
+            <span class="faq-arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </button>
+          <div class="faq-body"><p>We integrate alongside your team — not above it. Scope boundaries between Celsior-managed components (MLOps pipeline, model registry, monitoring) and client-managed components are documented at engagement design stage, before delivery begins.</p></div>
+        </div>
+        <div class="faq-item anim-up">
+          <button class="faq-trigger" aria-expanded="false">
+            <span class="faq-q">What differentiates this from hyperscaler AI professional services?</span>
+            <span class="faq-arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </button>
+          <div class="faq-body"><p>Hyperscaler PS defaults to their own cloud, ML services, and tooling. We're platform-agnostic — and we bring proprietary IP (CAFE, PACE, HALO, EazyML) that directly addresses governance and explainability requirements that hyperscaler engagements do not.</p></div>
+        </div>
+        <div class="faq-item anim-up">
+          <button class="faq-trigger" aria-expanded="false">
+            <span class="faq-q">How does Celsior handle model drift after the engagement ends?</span>
+            <span class="faq-arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </button>
+          <div class="faq-body"><p>Drift management is architecturally embedded — not left to the client post-engagement. Automated drift detection thresholds, retraining triggers, and PACE-based observability dashboards are configured during delivery and handed over with full operational runbooks.</p></div>
+        </div>
+        <div class="faq-item anim-up">
+          <button class="faq-trigger" aria-expanded="false">
+            <span class="faq-q">Which regulatory frameworks does the governance layer address?</span>
+            <span class="faq-arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </button>
+          <div class="faq-body"><p>Our model documentation and explainability practices are aligned to OCC SR 11-7 for banking model risk management, EU AI Act risk tier requirements, and HIPAA AI provisions for healthcare. Governance artefacts are designed to be examination-ready from day one.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     FINAL CTA
+══════════════════════════════════════════════════════════ -->
+<section class="final-cta" id="ctaSec">
+  <div class="final-cta-inner">
+    <div class="final-cta-eyebrow anim-up">Talk to Our Practice Lead</div>
+    <h2 class="final-cta-h2 anim-up">30-minute architecture review.<br>Scoped to your stack.</h2>
+    <p class="final-cta-sub anim-up">No deck. No sales pitch. A focused conversation with a Celsior AI/ML engineering lead about your specific delivery constraints.</p>
+    <div class="final-cta-btns anim-up">
+      <a href="index.html#contact" class="btn-primary">Request an Architecture Review
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2.5 7h9M11.5 7L8 3.5M11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href="#" class="btn-ghost">Download Capability Brief</a>
+    </div>
+  </div>
+</section>
+
+<script>
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+// ══════════════════════════════════════════════════════
+//  NAVBAR SCROLL
+// ══════════════════════════════════════════════════════
+const navbar = document.getElementById('navbar');
+ScrollTrigger.create({
+  start: 'top -1',
+  onUpdate(self) {
+    navbar.classList.toggle('scrolled', self.scroll() > 10);
+  }
+});
+
+// ══════════════════════════════════════════════════════
+//  PAGE PROGRESS
+// ══════════════════════════════════════════════════════
+const pgBar = document.getElementById('page-progress');
+ScrollTrigger.create({
+  start: 0,
+  end: 'max',
+  onUpdate(self) {
+    gsap.set(pgBar, { scaleX: self.progress });
+  }
+});
+
+// ══════════════════════════════════════════════════════
+//  HERO CANVAS — animated grid dots (background)
+// ══════════════════════════════════════════════════════
+(function() {
+  const canvas = document.getElementById('heroCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, dots = [], t = 0;
+
+  function resize() {
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+    buildDots();
+  }
+
+  function buildDots() {
+    dots = [];
+    const cols = Math.ceil(W / 60);
+    const rows = Math.ceil(H / 60);
+    for (let r = 0; r <= rows; r++) {
+      for (let c = 0; c <= cols; c++) {
+        dots.push({
+          x: c * 60, y: r * 60,
+          ox: c * 60, oy: r * 60,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+    }
+  }
+
+  function draw() {
+    requestAnimationFrame(draw);
+    t += 0.006;
+    ctx.clearRect(0, 0, W, H);
+    const cols = Math.ceil(W / 60) + 1;
+    ctx.strokeStyle = 'rgba(34,84,244,0.09)';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < dots.length; i++) {
+      const d = dots[i];
+      d.x = d.ox + Math.sin(t + d.phase) * 7;
+      d.y = d.oy + Math.cos(t * 0.65 + d.phase) * 5;
+      if ((i + 1) % cols !== 0 && i + 1 < dots.length) {
+        ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(dots[i+1].x, dots[i+1].y); ctx.stroke();
+      }
+      if (i + cols < dots.length) {
+        ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(dots[i+cols].x, dots[i+cols].y); ctx.stroke();
+      }
+    }
+    for (const d of dots) {
+      ctx.beginPath(); ctx.arc(d.x, d.y, 1, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(34,84,244,0.35)'; ctx.fill();
+    }
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  draw();
+})();
+
+// ══════════════════════════════════════════════════════
+//  3D MORPHING PARTICLE ANIMATION (Three.js)
+// ══════════════════════════════════════════════════════
+(function() {
+  if (typeof THREE === 'undefined') return;
+  const wrap = document.getElementById('aiCanvasWrap');
+  const canvas3d = document.getElementById('aiCanvas3d');
+  if (!wrap || !canvas3d) return;
+
+  // ── Scene setup ──────────────────────────────────────
+  const renderer = new THREE.WebGLRenderer({ canvas: canvas3d, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+  camera.position.set(0, 0, 5.8);
+
+  const heroSection = document.getElementById('hero');
+
+  function resize3d() {
+    const W = wrap.offsetWidth  || 700;
+    const H = wrap.offsetHeight || 800;
+    renderer.setSize(W, H, false);
+    camera.aspect = W / H;
+    camera.updateProjectionMatrix();
+  }
+  requestAnimationFrame(resize3d);
+  window.addEventListener('resize', resize3d);
+
+  // ── Particle count ────────────────────────────────────
+  const N = 3200;
+
+  // ── Shape generators ─────────────────────────────────
+  // Each returns Float32Array of length N*3
+
+  // 1. NEURAL NETWORK — layered nodes with depth variation
+  // ── SHAPE 1: PERCEPTRON GRID ────────────────────────────
+  // Clean horizontal layered neural net: dots at grid intersections,
+  // lines of particles along each connection — unmistakably a NN diagram
+  function shapeNeuralNet() {
+    const pos = new Float32Array(N * 3);
+    const layers = [4, 6, 8, 6, 4];
+    const W = 5.2, H = 4.4;
+    let idx = 0;
+    // Pre-compute node world positions
+    const nodes = [];
+    for (let l = 0; l < layers.length; l++) {
+      const x = (l / (layers.length - 1)) * W - W / 2;
+      for (let n = 0; n < layers[l]; n++) {
+        const y = layers[l] > 1 ? (n / (layers[l] - 1)) * H - H / 2 : 0;
+        nodes.push({ l, n, x, y });
+      }
+    }
+    // Dense node clusters (40 particles each)
+    const CLUSTER = 40;
+    for (const nd of nodes) {
+      for (let p = 0; p < CLUSTER && idx < N; p++, idx++) {
+        const r = Math.random() * 0.11, a = Math.random() * Math.PI * 2;
+        pos[idx*3]   = nd.x + r * Math.cos(a);
+        pos[idx*3+1] = nd.y + r * Math.sin(a);
+        pos[idx*3+2] = (Math.random() - 0.5) * 0.2;
+      }
+    }
+    // Connection lines between every pair in adjacent layers
+    const layerStarts = layers.reduce((acc, cnt) => {
+      acc.push((acc[acc.length-1]||0) + (acc.length > 0 ? layers[acc.length-1] : 0));
+      return acc;
+    }, [0]);
+    // Rebuild properly
+    let ls = [0];
+    for (let i = 0; i < layers.length - 1; i++) ls.push(ls[ls.length-1] + layers[i]);
+    const LINE_PTS = 8;
+    for (let l = 0; l < layers.length - 1; l++) {
+      for (let a = 0; a < layers[l]; a++) {
+        for (let b = 0; b < layers[l+1]; b++) {
+          const nA = nodes[ls[l] + a], nB = nodes[ls[l+1] + b];
+          for (let s = 1; s < LINE_PTS && idx < N; s++, idx++) {
+            const t = s / LINE_PTS;
+            pos[idx*3]   = nA.x + (nB.x - nA.x) * t + (Math.random()-0.5)*0.03;
+            pos[idx*3+1] = nA.y + (nB.y - nA.y) * t + (Math.random()-0.5)*0.03;
+            pos[idx*3+2] = (Math.random()-0.5)*0.1;
+          }
+        }
+      }
+    }
+    while (idx < N) {
+      pos[idx*3]=(Math.random()-0.5)*5.8; pos[idx*3+1]=(Math.random()-0.5)*5; pos[idx*3+2]=(Math.random()-0.5)*0.5; idx++;
+    }
+    return pos;
+  }
+
+  // ── SHAPE 2: DNA DOUBLE HELIX ───────────────────────────
+  function shapeDNA() {
+    const pos = new Float32Array(N * 3);
+    const half = Math.floor(N * 0.45);
+    for (let i = 0; i < half*2; i++) {
+      const t = (i % half) / half;
+      const y = t * 4.0 - 2.0;
+      const angle = t * Math.PI * 9;
+      const strand = i < half ? 0 : Math.PI;
+      const R = 1.4 + (Math.random()-0.5)*0.04;
+      pos[i*3]   = Math.cos(angle + strand) * R + (Math.random()-0.5)*0.06;
+      pos[i*3+1] = y + (Math.random()-0.5)*0.05;
+      pos[i*3+2] = Math.sin(angle + strand) * R * 0.5 + (Math.random()-0.5)*0.06;
+    }
+    // rungs every 15 particles
+    let idx = half*2;
+    for (let i = 0; i < half && idx < N; i += 12) {
+      const t = i / half;
+      const y = t * 4.0 - 2.0;
+      const angle = t * Math.PI * 9;
+      for (let s = 0; s <= 5 && idx < N; s++, idx++) {
+        const frac = s/5;
+        pos[idx*3]   = Math.cos(angle)*1.6*(1-frac) + Math.cos(angle+Math.PI)*1.6*frac;
+        pos[idx*3+1] = y + (Math.random()-0.5)*0.03;
+        pos[idx*3+2] = Math.sin(angle)*0.8*(1-frac) + Math.sin(angle+Math.PI)*0.8*frac;
+      }
+    }
+    while (idx < N) {
+      pos[idx*3]=(Math.random()-0.5)*3.5; pos[idx*3+1]=(Math.random()-0.5)*7; pos[idx*3+2]=(Math.random()-0.5)*1.5; idx++;
+    }
+    return pos;
+  }
+
+  // ── SHAPE 3: ATOM / ORBITAL MODEL ──────────────────────
+  // Central nucleus + 3 orbital rings at different tilt angles
+  function shapeAtom() {
+    const pos = new Float32Array(N * 3);
+    let idx = 0;
+    // nucleus
+    for (let i = 0; i < 120 && idx < N; i++, idx++) {
+      const r = Math.random() * 0.35;
+      const a = Math.random()*Math.PI*2, b = Math.random()*Math.PI;
+      pos[idx*3]   = r*Math.sin(b)*Math.cos(a);
+      pos[idx*3+1] = r*Math.sin(b)*Math.sin(a);
+      pos[idx*3+2] = r*Math.cos(b);
+    }
+    // 3 orbital ellipses at different tilt angles
+    const orbits = [
+      { tiltX: 0,           tiltZ: 0,           rx: 2.8, ry: 2.8 },
+      { tiltX: Math.PI/3,   tiltZ: Math.PI/5,   rx: 2.6, ry: 2.6 },
+      { tiltX: -Math.PI/4,  tiltZ: Math.PI/3,   rx: 2.4, ry: 2.4 },
+    ];
+    const perOrbit = Math.floor((N - 120) / 3);
+    orbits.forEach(({ tiltX, tiltZ, rx, ry }) => {
+      for (let i = 0; i < perOrbit && idx < N; i++, idx++) {
+        const a = (i / perOrbit) * Math.PI * 2;
+        let x = rx * Math.cos(a) + (Math.random()-0.5)*0.1;
+        let y = ry * Math.sin(a) * 0.22 + (Math.random()-0.5)*0.08;
+        let z = (Math.random()-0.5)*0.12;
+        // rotate by tiltX
+        const y1 = y*Math.cos(tiltX) - z*Math.sin(tiltX);
+        const z1 = y*Math.sin(tiltX) + z*Math.cos(tiltX);
+        // rotate by tiltZ
+        const x2 = x*Math.cos(tiltZ) - y1*Math.sin(tiltZ);
+        const y2 = x*Math.sin(tiltZ) + y1*Math.cos(tiltZ);
+        pos[idx*3]=x2; pos[idx*3+1]=y2; pos[idx*3+2]=z1;
+      }
+    });
+    while (idx < N) {
+      pos[idx*3]=(Math.random()-0.5)*6; pos[idx*3+1]=(Math.random()-0.5)*6; pos[idx*3+2]=(Math.random()-0.5)*1.5; idx++;
+    }
+    return pos;
+  }
+
+  // ── SHAPE 4: BRAIN / NEURAL CORTEX ─────────────────────
+  // Folded hemisphere — instantly recognisable as a brain
+  function shapeBrain() {
+    const pos = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++) {
+      const u = Math.random() * Math.PI;        // polar [0,π]
+      const v = Math.random() * Math.PI;        // azimuth [0,π] — hemisphere
+      // Add gyri (ridges) via compound sine noise
+      const gyri = 0.22*Math.sin(u*7) + 0.15*Math.cos(v*5) + 0.10*Math.sin(u*3+v*4) + 0.08*Math.cos(u*11+v*2);
+      const R = 2.0 + gyri * 0.7 + (Math.random()-0.5)*0.04;
+      pos[i*3]   = R * Math.sin(u) * Math.cos(v) * 1.05;
+      pos[i*3+1] = R * Math.cos(u) * 0.82 - 0.15;
+      pos[i*3+2] = R * Math.sin(u) * Math.sin(v) * 0.78;
+    }
+    return pos;
+  }
+
+  // ── SHAPE 5: INFINITY / ML LOOP ────────────────────────
+  // Lemniscate of Bernoulli — the MLOps infinite loop symbol
+  function shapeInfinity() {
+    const pos = new Float32Array(N * 3);
+    const TUBE_R = 0.28;
+    for (let i = 0; i < N; i++) {
+      const t = (i / N) * Math.PI * 2;
+      const denom = 1 + Math.sin(t)*Math.sin(t);
+      const cx = 2.0 * Math.cos(t) / denom;
+      const cy = 2.0 * Math.sin(t) * Math.cos(t) / denom * 0.5;
+      // tube cross-section
+      const phi = Math.random() * Math.PI * 2;
+      const r = (Math.random()) * TUBE_R;
+      // tangent direction for cross-section orientation
+      const tx2 = -Math.sin(t), ty2 = Math.cos(t)*0.55;
+      const len = Math.sqrt(tx2*tx2+ty2*ty2)+0.001;
+      const nx = -ty2/len, ny = tx2/len;
+      pos[i*3]   = cx + r*(nx*Math.cos(phi));
+      pos[i*3+1] = cy + r*(ny*Math.cos(phi));
+      pos[i*3+2] = r*Math.sin(phi)*0.8 + (Math.random()-0.5)*0.08;
+    }
+    return pos;
+  }
+
+  // ── Build shapes ─────────────────────────────────────
+  const SHAPES = [
+    { fn: shapeNeuralNet, label: 'Neural Network'    },
+    { fn: shapeDNA,       label: 'DNA Data Helix'    },
+    { fn: shapeAtom,      label: 'Atomic Model'      },
+    { fn: shapeBrain,     label: 'Neural Cortex'     },
+    { fn: shapeInfinity,  label: 'ML Feedback Loop'  },
+  ];
+  const SHAPE_NAMES = SHAPES.map(s => s.label);
+  const shapeBuffers = SHAPES.map(s => s.fn());
+
+  // ── Geometry & Material ───────────────────────────────
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(N * 3);
+  const targetPositions = new Float32Array(N * 3);
+  const colors = new Float32Array(N * 3);
+
+  // Initialize with shape 0
+  for (let i = 0; i < N * 3; i++) positions[i] = shapeBuffers[0][i];
+
+  // Per-particle colour: predominantly white, soft blue-white tones
+  const palette = [
+    [1.00, 1.00, 1.00],   // pure white x4 (dominant)
+    [1.00, 1.00, 1.00],
+    [1.00, 1.00, 1.00],
+    [1.00, 1.00, 1.00],
+    [0.85, 0.93, 1.00],   // ice white-blue
+    [0.80, 0.90, 1.00],   // pale blue-white
+    [0.75, 0.88, 1.00],   // very light blue
+    [0.72, 0.95, 0.98],   // white-cyan
+    [0.90, 0.85, 1.00],   // white-lavender
+  ];
+  for (let i = 0; i < N; i++) {
+    const c = palette[Math.floor(Math.random() * palette.length)];
+    colors[i*3]   = c[0];
+    colors[i*3+1] = c[1];
+    colors[i*3+2] = c[2];
+  }
+
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('aColor',   new THREE.BufferAttribute(colors, 3));
+
+  // Custom shader material for sized, colored, glowing particles
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      uTime:  { value: 0 },
+      uSize:  { value: window.devicePixelRatio > 1 ? 55.0 : 42.0 },
+    },
+    vertexShader: `
+      attribute vec3 aColor;
+      uniform float uTime;
+      uniform float uSize;
+      varying vec3 vColor;
+      varying float vAlpha;
+      void main() {
+        vColor = aColor;
+        // subtle twinkle — tighter range so most particles stay visible
+        float pulse = sin(uTime * 2.2 + position.x * 3.0 + position.y * 2.5) * 0.18 + 0.82;
+        vAlpha = pulse;
+        vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+        // smaller, distance-correct point size — like homepage dots
+        gl_PointSize = uSize / -mvPos.z * pulse;
+        gl_Position = projectionMatrix * mvPos;
+      }
+    `,
+    fragmentShader: `
+      varying vec3 vColor;
+      varying float vAlpha;
+      void main() {
+        float d = length(gl_PointCoord - 0.5);
+        if (d > 0.5) discard;
+        // tight core with quick fade — produces small crisp star-like points
+        float core  = smoothstep(0.18, 0.0, d) * 1.0;
+        float halo  = smoothstep(0.5,  0.1, d) * 0.35;
+        float alpha = (core + halo) * vAlpha;
+        gl_FragColor = vec4(vColor, alpha);
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+
+  const points = new THREE.Points(geometry, material);
+  scene.add(points);
+
+  // ── Connection lines between nearby particles (neural net only) ──
+  const lineGeo = new THREE.BufferGeometry();
+  const linePositions = new Float32Array(N * 6); // max 1 line segment per particle
+  lineGeo.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+  const lineMat = new THREE.LineBasicMaterial({
+    color: 0x4488ff,
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+  const lineSegments = new THREE.LineSegments(lineGeo, lineMat);
+  scene.add(lineSegments);
+
+  // ── Shape cycling ─────────────────────────────────────
+  let currentShape = 0;
+  let morphProgress = 1.0;  // 1 = settled
+  let morphSpeed = 0;
+  const MORPH_DURATION = 2200;  // ms
+  const HOLD_DURATION  = 3800;  // ms between morphs
+
+  function startMorph(toShape) {
+    for (let i = 0; i < N * 3; i++) targetPositions[i] = shapeBuffers[toShape][i];
+    morphProgress = 0;
+    morphSpeed = 1 / MORPH_DURATION;
+    currentShape = toShape;
+    // update label
+    const lbl = document.getElementById('aiShapeLabel');
+    if (lbl) { lbl.style.opacity = '0'; setTimeout(()=>{ lbl.textContent = SHAPE_NAMES[toShape]; lbl.style.opacity='1'; }, 280); }
+    // update dots
+    document.querySelectorAll('.ai-dot').forEach((d,i) => d.classList.toggle('active', i === toShape));
+    // toggle line opacity for neural net
+    gsap.to(lineMat, { opacity: toShape === 0 ? 0.07 : 0, duration: 1.0 });
+  }
+
+  let holdTimer = 0;
+  function cycleShape(dt) {
+    if (morphProgress < 1) {
+      morphProgress = Math.min(1, morphProgress + dt * (1000 / MORPH_DURATION));
+      // ease-in-out cubic
+      const t = morphProgress < 0.5
+        ? 4 * morphProgress * morphProgress * morphProgress
+        : 1 - Math.pow(-2 * morphProgress + 2, 3) / 2;
+      const pos = geometry.attributes.position.array;
+      const src = shapeBuffers[(currentShape === 0 ? SHAPES.length-1 : currentShape - 1) % SHAPES.length];
+      // blend positions: but we just do current positions → target
+      // store original positions before morph started (simplified: lerp from snapshot)
+      for (let i = 0; i < N * 3; i++) {
+        pos[i] += (targetPositions[i] - pos[i]) * (t * 0.08);
+      }
+      geometry.attributes.position.needsUpdate = true;
+    } else {
+      holdTimer += dt;
+      if (holdTimer > HOLD_DURATION / 1000) {
+        holdTimer = 0;
+        startMorph((currentShape + 1) % SHAPES.length);
+      }
+    }
+  }
+
+  // Better morph: snapshot current positions each time
+  let snapPositions = new Float32Array(N * 3);
+  let morphT = 1;
+  let morphFrom = 0, morphTo = 0;
+  let holdT = 0;
+  const HOLD = 4.0, MORPH = 2.5;
+
+  function initShape(shapeIdx) {
+    const buf = shapeBuffers[shapeIdx];
+    for (let i = 0; i < N * 3; i++) snapPositions[i] = buf[i];
+    for (let i = 0; i < N * 3; i++) positions[i] = buf[i];
+    geometry.attributes.position.needsUpdate = true;
+    morphFrom = shapeIdx; morphTo = shapeIdx; morphT = 1; holdT = 0;
+  }
+
+  function triggerMorph(toShape) {
+    // snapshot current (interpolated) position as the FROM
+    const pos = geometry.attributes.position.array;
+    for (let i = 0; i < N * 3; i++) snapPositions[i] = pos[i];
+    morphFrom = currentShape;
+    morphTo   = toShape;
+    currentShape = toShape;
+    morphT = 0;
+    // update UI
+    const lbl = document.getElementById('aiShapeLabel');
+    if (lbl) { lbl.style.opacity = '0'; setTimeout(()=>{ lbl.textContent = SHAPE_NAMES[toShape]; lbl.style.opacity='1'; }, 300); }
+    document.querySelectorAll('.ai-dot').forEach((d,i) => d.classList.toggle('active', i === toShape));
+    gsap.to(lineMat, { opacity: toShape === 0 ? 0.08 : 0, duration: 1.2 });
+  }
+
+  function updateMorph(dt) {
+    if (morphT < 1) {
+      morphT = Math.min(1, morphT + dt / MORPH);
+      const ease = morphT < 0.5
+        ? 4*morphT*morphT*morphT
+        : 1 - Math.pow(-2*morphT + 2, 3) / 2;
+      const pos = geometry.attributes.position.array;
+      const tgt = shapeBuffers[morphTo];
+      for (let i = 0; i < N * 3; i++) {
+        pos[i] = snapPositions[i] + (tgt[i] - snapPositions[i]) * ease;
+      }
+      geometry.attributes.position.needsUpdate = true;
+    } else {
+      holdT += dt;
+      if (holdT > HOLD) {
+        holdT = 0;
+        triggerMorph((currentShape + 1) % SHAPES.length);
+      }
+    }
+  }
+
+  // ── Build connection lines for neural net ─────────────
+  function buildLines() {
+    const pos = geometry.attributes.position.array;
+    let li = 0;
+    const MAX_DIST = 0.8, MAX_LINES = N;
+    for (let i = 0; i < N && li < MAX_LINES * 6; i++) {
+      for (let j = i+1; j < N && li < MAX_LINES * 6; j++) {
+        const dx = pos[i*3]-pos[j*3], dy = pos[i*3+1]-pos[j*3+1], dz = pos[i*3+2]-pos[j*3+2];
+        if (Math.sqrt(dx*dx+dy*dy+dz*dz) < MAX_DIST) {
+          linePositions[li++] = pos[i*3];   linePositions[li++] = pos[i*3+1]; linePositions[li++] = pos[i*3+2];
+          linePositions[li++] = pos[j*3];   linePositions[li++] = pos[j*3+1]; linePositions[li++] = pos[j*3+2];
+        }
+      }
+    }
+    lineGeo.attributes.position.needsUpdate = true;
+    lineGeo.setDrawRange(0, li / 3);
+  }
+
+  // ── Interactive mouse camera ──────────────────────────
+  // Mirrors the homepage camera tilt logic
+  let mX = 0, mY = 0, smMX = 0, smMY = 0;
+  let camBaseX = 0, camBaseY = 0;
+  let interactive = false;
+
+  window.addEventListener('mousemove', e => {
+    mX = (e.clientX / window.innerWidth)  * 2 - 1;
+    mY = (e.clientY / window.innerHeight) * 2 - 1;
+  });
+  wrap?.addEventListener('mouseenter', () => interactive = true);
+  wrap?.addEventListener('mouseleave', () => interactive = false);
+
+  // Parallax from scroll
+  ScrollTrigger.create({
+    trigger: '#hero',
+    start: 'top top',
+    end: 'bottom top',
+    scrub: true,
+    onUpdate(self) {
+      camBaseY = self.progress * -1.2;
+    }
+  });
+
+  // ── Slow self-rotation ────────────────────────────────
+  let autoRotY = 0;
+
+  // ── Render loop ───────────────────────────────────────
+  let lastTime = 0;
+  function animate(time) {
+    requestAnimationFrame(animate);
+    const dt = Math.min((time - lastTime) * 0.001, 0.05);
+    lastTime = time;
+
+    material.uniforms.uTime.value = time * 0.001;
+    autoRotY += dt * 0.18;
+
+    // Smooth mouse toward cursor
+    smMX += (mX - smMX) * 0.04;
+    smMY += (mY - smMY) * 0.04;
+
+    if (interactive) {
+      points.rotation.y = autoRotY + smMX * 0.35;
+      points.rotation.x = smMY * 0.22;
+    } else {
+      points.rotation.y = autoRotY;
+      points.rotation.x += (0 - points.rotation.x) * 0.03;
+    }
+    lineSegments.rotation.copy(points.rotation);
+
+    // Camera parallax (homepage style)
+    camera.position.x += (smMX * 0.14 - camera.position.x) * 0.04;
+    camera.position.y += (-smMY * 0.10 + camBaseY - camera.position.y) * 0.04;
+    camera.lookAt(0, 0, 0);
+
+    updateMorph(dt);
+    renderer.render(scene, camera);
+  }
+
+  // ── Init ──────────────────────────────────────────────
+  initShape(0);
+  buildLines();
+  gsap.to(lineMat, { opacity: 0.08, duration: 2, delay: 1 });
+  animate(0);
+
+  // Initial entrance — fade particles in
+  const uSizeTarget = material.uniforms.uSize;
+  const uSizeFinal = uSizeTarget.value;
+  uSizeTarget.value = 0;
+  gsap.to(uSizeTarget, { value: uSizeFinal, duration: 1.8, ease: 'power3.out', delay: 0.4 });
+})();
+
+// ══════════════════════════════════════════════════════
+//  HERO ENTRANCE ANIMATIONS
+// ══════════════════════════════════════════════════════
+const heroEls = ['#bc','#ey','#h1','#hs'];
+gsap.set(heroEls, { opacity: 0, y: 40 });
+heroEls.forEach((sel, i) => {
+  gsap.to(sel, {
+    opacity: 1, y: 0,
+    duration: 1.0,
+    ease: 'power3.out',
+    delay: 0.3 + i * 0.14
+  });
+});
+// Stats
+gsap.set('.hwdi-stat-card', { opacity: 0, y: 28, scale: 0.97 });
+gsap.to('.hwdi-stat-card', {
+  opacity: 1, y: 0,
+  duration: 0.8,
+  ease: 'power3.out',
+  stagger: 0.1,
+  delay: 0.9
+});
+
+// Hero entrance — stat cards glassmorphism reveal
+gsap.set('.hwdi-stat-card', { opacity: 0, y: 28, scale: 0.96 });
+gsap.to('.hwdi-stat-card', {
+  opacity: 1, y: 0, scale: 1,
+  duration: 0.75,
+  ease: 'power3.out',
+  stagger: 0.1,
+  delay: 1.1
+});
+
+// Stat counter animation
+const statEl = document.querySelector('[data-target]');
+if (statEl) {
+  gsap.to({ val: 0 }, {
+    val: 55,
+    duration: 2.4,
+    delay: 1.2,
+    ease: 'power2.out',
+    onUpdate() { statEl.textContent = Math.round(this.targets()[0].val) + '%'; }
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  SCROLL-TRIGGERED SECTION ANIMATIONS
+// ══════════════════════════════════════════════════════
+
+// Generic anim-up
+gsap.utils.toArray('.anim-up').forEach((el, i) => {
+  if (el.closest('#hero')) return; // skip hero (handled above)
+  gsap.to(el, {
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 88%',
+      toggleActions: 'play none none reverse'
+    },
+    opacity: 1,
+    y: 0,
+    duration: 0.85,
+    ease: 'power3.out',
+    delay: (i % 4) * 0.08
+  });
+});
+
+// anim-left
+gsap.utils.toArray('.anim-left').forEach(el => {
+  gsap.to(el, {
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 88%',
+      toggleActions: 'play none none reverse'
+    },
+    opacity: 1,
+    x: 0,
+    duration: 0.9,
+    ease: 'power3.out'
+  });
+});
+
+// anim-right
+gsap.utils.toArray('.anim-right').forEach(el => {
+  gsap.to(el, {
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 88%',
+      toggleActions: 'play none none reverse'
+    },
+    opacity: 1,
+    x: 0,
+    duration: 0.9,
+    ease: 'power3.out'
+  });
+});
+
+// anim-scale
+gsap.utils.toArray('.anim-scale').forEach((el, i) => {
+  gsap.to(el, {
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 88%',
+      toggleActions: 'play none none reverse'
+    },
+    opacity: 1,
+    scale: 1,
+    duration: 0.8,
+    ease: 'power3.out',
+    delay: (i % 3) * 0.1
+  });
+});
+
+// anim-fade for stack rows
+gsap.utils.toArray('.anim-fade').forEach((el, i) => {
+  gsap.to(el, {
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 90%',
+      toggleActions: 'play none none reverse'
+    },
+    opacity: 1,
+    duration: 0.65,
+    ease: 'power2.out',
+    delay: i * 0.06
+  });
+});
+
+// ══════════════════════════════════════════════════════
+//  DISCIPLINE PROGRESS BARS (scroll-triggered)
+// ══════════════════════════════════════════════════════
+document.querySelectorAll('.discipline').forEach(disc => {
+  ScrollTrigger.create({
+    trigger: disc,
+    start: 'top 70%',
+    onEnter: () => disc.classList.add('in-view'),
+    onLeaveBack: () => disc.classList.remove('in-view')
+  });
+});
+
+// ══════════════════════════════════════════════════════
+// ── DELIVERY — sticky-left + cascading right cards ────────────────────
+(function() {
+  const wraps    = Array.from(document.querySelectorAll('.phase-card-wrap'));
+  const progItems = Array.from(document.querySelectorAll('.deliver-prog-item'));
+  if (wraps.length === 0) return;
+
+  // ── Initial state: cards off-screen below ─────────────────────────
+  gsap.set(wraps, { opacity: 0, y: 60, scale: 0.97 });
+
+  // ── Cascade each card in as it scrolls into view ──────────────────
+  wraps.forEach((wrap, i) => {
+    ScrollTrigger.create({
+      trigger: wrap,
+      start: 'top 88%',
+      end:   'top 30%',
+      onEnter() {
+        gsap.to(wrap, {
+          opacity: 1, y: 0, scale: 1,
+          duration: 0.75,
+          ease: 'power3.out',
+          delay: i === 0 ? 0 : 0.05,
+          clearProps: 'transform,opacity'
+        });
+        setActive(i);
+      },
+      onLeaveBack() {
+        // Re-hide when scrolled back above — true cascade reverse
+        gsap.to(wrap, {
+          opacity: 0, y: 60, scale: 0.97,
+          duration: 0.45, ease: 'power2.in'
+        });
+        setActive(Math.max(0, i - 1));
+      }
+    });
+  });
+
+  // ── Progress dot activation ───────────────────────────────────────
+  function setActive(idx) {
+    progItems.forEach((el, i) => el.classList.toggle('active', i === idx));
+  }
+
+  // Click on progress dot → smooth scroll to that card
+  progItems.forEach((item, i) => {
+    item.addEventListener('click', () => {
+      wraps[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+
+  // ── Left panel entrance ───────────────────────────────────────────
+  gsap.set('#deliverSec .deliver-left .sec-eyebrow, #deliverSec .sec-h2, #deliverSec .sec-lead, #deliverSec .deliver-progress', {
+    opacity: 0, y: 24
+  });
+  ScrollTrigger.create({
+    trigger: '#deliverSec',
+    start: 'top 80%',
+    once: true,
+    onEnter() {
+      gsap.to('#deliverSec .deliver-left .sec-eyebrow', { opacity:1, y:0, duration:.7, ease:'power3.out' });
+      gsap.to('#deliverSec .sec-h2',    { opacity:1, y:0, duration:.75, ease:'power3.out', delay:.08 });
+      gsap.to('#deliverSec .sec-lead',  { opacity:1, y:0, duration:.75, ease:'power3.out', delay:.16 });
+      gsap.to('#deliverSec .deliver-progress', { opacity:1, y:0, duration:.75, ease:'power3.out', delay:.24 });
+    }
+  });
+})();
+
+// stack rows replaced by CSS marquee animations
+
+// ══════════════════════════════════════════════════════
+//  STORY CHAPTERS — staggered entrance
+// ══════════════════════════════════════════════════════
+const chapters = gsap.utils.toArray('.chapter');
+gsap.set(chapters, { opacity: 0, y: 30 });
+ScrollTrigger.create({
+  trigger: '#storySec',
+  start: 'top 72%',
+  once: true,
+  onEnter() {
+    gsap.to(chapters, {
+      opacity: 1, y: 0,
+      duration: 0.75,
+      ease: 'power3.out',
+      stagger: 0.12
+    });
+  }
+});
+
+// ══════════════════════════════════════════════════════
+//  FAQ ACCORDION
+// ══════════════════════════════════════════════════════
+(function() {
+  const items = Array.from(document.querySelectorAll('.faq-item'));
+  const DUR = 0.38, EASE = 'power3.inOut';
+  let openItem = null, openBody = null, openArrow = null;
+
+  function closeItem(cb) {
+    if (!openItem) { cb && cb(); return; }
+    const b = openBody, a = openArrow, btn = openItem.querySelector('.faq-trigger');
+    openItem = openBody = openArrow = null;
+    btn.setAttribute('aria-expanded','false');
+    gsap.to(a, { rotation: 0, duration: DUR, ease: EASE });
+    gsap.to(b, { height: 0, duration: DUR, ease: EASE, onComplete: cb });
+  }
+
+  function openIt(item) {
+    const body = item.querySelector('.faq-body');
+    const arrow = item.querySelector('.faq-arrow');
+    const btn = item.querySelector('.faq-trigger');
+    gsap.set(body, { height: 'auto' });
+    const h = body.offsetHeight;
+    gsap.set(body, { height: 0 });
+    btn.setAttribute('aria-expanded','true');
+    gsap.to(arrow, { rotation: 180, duration: DUR, ease: EASE });
+    gsap.to(body, { height: h, duration: DUR, ease: EASE });
+    openItem = item; openBody = body; openArrow = arrow;
+  }
+
+  items.forEach(item => {
+    item.querySelector('.faq-trigger').addEventListener('click', () => {
+      if (item === openItem) { closeItem(); }
+      else { closeItem(() => openIt(item)); }
+    });
+  });
+
+  // Hover color
+  const colors = ['#2254f4','#12BAA0','#E8834A','#961A4D'];
+  items.forEach((item, i) => {
+    const q = item.querySelector('.faq-q');
+    item.addEventListener('mouseenter', () => gsap.to(q, { color: colors[i % colors.length], duration: 0.5 }));
+    item.addEventListener('mouseleave', () => gsap.to(q, { color: 'var(--ink)', duration: 0.7 }));
+  });
+})();
+
+
+// (hero canvas is full-section background — no separate parallax needed)
+
+// ══════════════════════════════════════════════════════
+//  BRIDGE CARDS — stagger on parent trigger
+// ══════════════════════════════════════════════════════
+gsap.set('.bridge-card', { opacity: 0, y: 36 });
+ScrollTrigger.create({
+  trigger: '#bridgeSec',
+  start: 'top 72%',
+  once: true,
+  onEnter() {
+    gsap.to('.bridge-card', {
+      opacity: 1, y: 0,
+      duration: 0.9,
+      ease: 'power3.out',
+      stagger: 0.15
+    });
+  }
+});
+
+// ══════════════════════════════════════════════════════
+//  DISCIPLINES — entrance on each
+// ══════════════════════════════════════════════════════
+gsap.utils.toArray('.discipline').forEach((disc, i) => {
+  gsap.set(disc.querySelector('.disc-left'), { opacity: 0, x: -24 });
+  gsap.set(disc.querySelector('.disc-right'), { opacity: 0, x: 24 });
+  ScrollTrigger.create({
+    trigger: disc,
+    start: 'top 82%',
+    once: true,
+    onEnter() {
+      gsap.to(disc.querySelector('.disc-left'), { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' });
+      gsap.to(disc.querySelector('.disc-right'), { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out', delay: 0.1 });
+    }
+  });
+});
+
+// ══════════════════════════════════════════════════════
+//  FORWARD CARDS — stagger
+// ══════════════════════════════════════════════════════
+gsap.set('.fwd-card', { opacity: 0, y: 30, scale: 0.96 });
+ScrollTrigger.create({
+  trigger: '#forwardSec',
+  start: 'top 74%',
+  once: true,
+  onEnter() {
+    gsap.to('.fwd-card', {
+      opacity: 1, y: 0, scale: 1,
+      duration: 0.85,
+      ease: 'power3.out',
+      stagger: 0.14
+    });
+  }
+});
+
+</script>
+<script src="/shared.js" defer></script>
+</body>
+</html>

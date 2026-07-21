@@ -1145,7 +1145,10 @@ a.nav-link{text-decoration:none;}
   footerEl.id = 'siteFooterLight';
   const CF_CHEV = `<svg viewBox="0 0 12 12" fill="none"><path d="M4 2.5L7.5 6L4 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   function cfCol(head, links) {
-    return `<div class="cf-col"><p class="cf-col-head">${head}</p><nav class="cf-col-links">${links.map(l => `<a href="${l.href}" class="cf-col-link"><span>${l.label}</span>${CF_CHEV}</a>`).join('')
+    return `<div class="cf-col"><p class="cf-col-head">${head}</p><nav class="cf-col-links">${links.map(l => {
+      const ext = /^https?:\/\//.test(l.href) ? ' target="_blank" rel="noopener noreferrer"' : '';
+      return `<a href="${l.href}"${ext} class="cf-col-link"><span>${l.label}</span>${CF_CHEV}</a>`;
+    }).join('')
       }</nav></div>`;
   }
 
@@ -1167,29 +1170,32 @@ a.nav-link{text-decoration:none;}
           This is a staging website currently under development.
         </p>
 
-        <a class="cf-col-link" href="/contact-us/">
+        <a class="cf-col-link" href="/talent/contact-us/">
           <span>Contact Us</span>${CF_CHEV}
         </a>
       </div>
 
+      ${cfCol('Talent Services', [
+        { label: 'IT', href: '/talent/services/it-staffing/' },
+        { label: 'Non-IT', href: '/talent/services/non-it-staffing/' },
+        { label: 'Federal', href: '/talent/services/federal-staffing/' },
+        { label: 'Healthcare', href: 'https://pyramidci.com/healthcare/' },
+      ])}
+
+      ${cfCol('Workforce Solutions', [
+        { label: 'Global Capability Centers (GCC)', href: '/talent/global-workforce/global-capability-centers/' },
+        { label: 'Build-Operate-Transfer (BOT)', href: '/talent/global-workforce/build-operate-transfer/' },
+        { label: 'Bestshoring &amp; Delivery Model', href: '/talent/global-workforce/bestshoring/' },
+        { label: 'AI in HR — Hoonr&trade;', href: 'https://hoonr.ai/' },
+        { label: 'Talent Pool', href: 'https://aibuilders.hoonr.ai/' },
+      ])}
+
       ${cfCol('About', [
-        { label: 'Who We Are', href: '/about/who-we-are/' },
-        { label: 'Our Leadership', href: '/about-leadership/' },
-        { label: 'Success Stories', href: '/success-stories/' },
-        { label: 'Workforce Insights', href: '/blogs/' },
-      ])}
-
-      ${cfCol('Industries', [
-        { label: 'Banking &amp; Financial Services', href: '/industries/banking-financial-services/' },
-        { label: 'Insurance', href: '/industries/insurance/' },
-        { label: 'Healthcare &amp; Life Sciences', href: '/industries/healthcare/' },
-      ])}
-
-      ${cfCol('Technology', [
-        { label: 'AI &amp; Data', href: '/capabilities/ai-and-data/' },
-        { label: 'Cloud Engineering', href: '/capabilities/cloud-and-infrastructure-engineering/' },
-        { label: 'Security &amp; Governance', href: '/capabilities/security-and-governance/' },
-        { label: 'ServiceNow', href: '/partners/servicenow/' },
+        { label: 'Our Story', href: '/about/our-story/' },
+        { label: 'HumanEx Philosophy', href: '/about/our-story/our-philosophy/' },
+        { label: 'Diversity &amp; Certifications', href: '/about/our-story/diversity/' },
+        { label: 'Newsroom', href: '/about/our-story/newsroom/' },
+        { label: 'Resources', href: '/about/our-story/resources/' },
       ])}
     </div>
   </div>

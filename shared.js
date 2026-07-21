@@ -700,16 +700,18 @@ a.nav-link{text-decoration:none;}
   ];
 
   const navLinksHTML = navItems.map(it => `
-    <button class="nav-link" type="button" data-mega="${it.id}">
-      ${it.label}
-      <svg class="nav-chevron" viewBox="0 0 16 16" fill="none">
-        <path d="M4 6L8 10L12 6"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"/>
-      </svg>
-    </button>
+    <li class="nav-item" data-menu="${it.id}">
+      <button class="nav-link" type="button" data-mega="${it.id}">
+        ${it.label}
+        <svg class="chevron" viewBox="0 0 16 16" fill="none">
+          <path d="M4 6L8 10L12 6"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </li>
   `).join('');
 
   const drawerDivHTML = `
@@ -847,6 +849,10 @@ a.nav-link{text-decoration:none;}
   const IC_DOC = `<svg viewBox="0 0 24 24" fill="none"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v5h5M9 13h6M9 16.5h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const IC_CHART = `<svg viewBox="0 0 24 24" fill="none"><path d="M5 4v15a1 1 0 0 0 1 1h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M9 14l3-3 2.5 2.5L19 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const ASSESS_ICONS = [IC_DOC, IC_CHART];
+  /* Optional per-item overrides for the hover-preview feature card; unset items
+     fall back to the panel's default d.feature.desc / d.feature.cap. */
+  const FEATURE_DESCS = {};
+  const FEATURE_CAPS = {};
 
   /* Data-driven mega panels. Links preserved from the original menus. */
   const MEGA_DATA = [
@@ -870,8 +876,8 @@ a.nav-link{text-decoration:none;}
       },
       assessTag: 'Explore',
       assess: [
-        { label: 'Client Success Stories', href: '/success-stories/' },
-        { label: 'Workforce Insights', href: '/blogs/' },
+        { title: 'Client Success Stories', desc: 'See how we’ve helped enterprise clients build the teams they needed, faster.', href: '/success-stories/' },
+        { title: 'Workforce Insights', desc: 'Trends, benchmarks, and perspectives on the modern workforce.', href: '/blogs/' },
       ]
     },
     {
@@ -893,8 +899,8 @@ a.nav-link{text-decoration:none;}
       },
       assessTag: 'Insights',
       assess: [
-        { label: 'Success Stories', href: '/success-stories/' },
-        { label: 'Workforce Insights', href: '/blogs/' },
+        { title: 'Success Stories', desc: 'Real outcomes from clients using our flexible delivery models.', href: '/success-stories/' },
+        { title: 'Workforce Insights', desc: 'Trends, benchmarks, and perspectives on the modern workforce.', href: '/blogs/' },
       ]
     },
     {
@@ -915,8 +921,8 @@ a.nav-link{text-decoration:none;}
       },
       assessTag: 'Capabilities',
       assess: [
-        { label: 'AI &amp; Data', href: '/capabilities/ai-and-data/' },
-        { label: 'Cloud Engineering', href: '/capabilities/cloud-and-infrastructure-engineering/' },
+        { title: 'AI &amp; Data', desc: 'Engineering capability for AI-enabled data platforms and analytics.', href: '/capabilities/ai-and-data/' },
+        { title: 'Cloud Engineering', desc: 'Modernize infrastructure with secure, scalable cloud architecture.', href: '/capabilities/cloud-and-infrastructure-engineering/' },
       ]
     },
     {
@@ -937,8 +943,8 @@ a.nav-link{text-decoration:none;}
       },
       assessTag: 'Industries',
       assess: [
-        { label: 'Banking &amp; Financial Services', href: '/industries/banking-financial-services/' },
-        { label: 'Insurance', href: '/industries/insurance/' },
+        { title: 'Banking &amp; Financial Services', desc: 'Deep experience supporting regulated financial institutions.', href: '/industries/banking-financial-services/' },
+        { title: 'Insurance', desc: 'Workforce and technology expertise across the insurance value chain.', href: '/industries/insurance/' },
       ]
     },
     {
@@ -960,8 +966,8 @@ a.nav-link{text-decoration:none;}
       },
       assessTag: 'Explore',
       assess: [
-        { label: 'ServiceNow', href: '/partners/servicenow/' },
-        { label: 'Contact Us', href: '/contact-us/' },
+        { title: 'ServiceNow', desc: 'Certified delivery expertise across the ServiceNow platform.', href: '/partners/servicenow/' },
+        { title: 'Contact Us', desc: 'Talk to our team about your workforce or technology needs.', href: '/contact-us/' },
       ]
     },
     {
@@ -985,8 +991,8 @@ a.nav-link{text-decoration:none;}
       },
       assessTag: 'Learn More',
       assess: [
-        { label: 'Our Leadership', href: '/about-leadership/' },
-        { label: 'Contact Us', href: '/contact-us/' },
+        { title: 'Our Leadership', desc: 'Meet the team guiding Pyramid Talent’s strategy and delivery.', href: '/about-leadership/' },
+        { title: 'Contact Us', desc: 'Get in touch to learn more about working with Pyramid Talent.', href: '/contact-us/' },
       ]
     }
   ];
@@ -1130,8 +1136,8 @@ a.nav-link{text-decoration:none;}
        mirrors the desktop mega menu. Original drawer link groups are
        preserved untouched. */
     const DRAWER_MEGA_MAP = {
-      'd-solve': 'solve', 'd-how': 'how', 'd-deliver': 'deliver', 'd-ai': 'ai',
-      'd-ind': 'industries', 'd-part': 'partners', 'd-about': 'about'
+      'd-talent': 'talent', 'd-delivery': 'delivery', 'd-technology': 'technology',
+      'd-industries': 'industries', 'd-partners': 'partners', 'd-about': 'about'
     };
     Object.keys(DRAWER_MEGA_MAP).forEach(function (subId) {
       const sub = drawerEl.querySelector('#' + subId);
